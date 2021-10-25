@@ -7,11 +7,83 @@
     <title>Movies_api</title>
 </head>
 <body>
-    <h1>Movies API Documentation</h1>
-        <br>
-    <h2>Objective</h2>
-        <p>To build a movies api that allows users to browser movie selections and obtain information 
-            about the movie such as: genre, description, actors/actresses, and ratings.
-        </p>
+    <head>
+        <h1>Movies API Documentation</h1>
+            <br>
+        <h2>Objective</h2>
+            <p>To build a movies api that allows users to browser movie selections and obtain information 
+                about the movie such as: genre, description, actors/actresses, and ratings.
+            </p>
+    </head>
+
+    <main>
+        <h1>Endpoints</h1>
+        <ul id="get-requests">
+            <li><strong>GET Request Endpoints</strong></li>
+                <ul>
+                    <li>/movies</li>
+                        <ul>
+                            <li>Returns json data on all movies</li>
+                        </ul>
+                    <li>/Movies/:title</li>
+                        <ul>
+                            <li>Reutrns json data on a single movie</li>
+                        </ul>
+                    <li>/genre/:genre</li>
+                        <ul>
+                            <li>Returns json data about a genre</li>
+                        </ul>
+                    <li>/directors</li>
+                        <ul>
+                            <li>Reutnrs a list of all directors</li>
+                        </ul>
+                    <li>/directors/:director</li>
+                        <ul>
+                            <li>Returns json data about a single director</li>
+                        </ul>
+                </ul>
+        </ul>
+
+        <ul id="post-requests">
+            <li><strong>POST Requests</strong></li>
+            <ul>
+                <li>/registration</li>
+                    <ul>
+                        <li>Registers new user</li>
+                    </ul>
+                <li>/:userID/favorites/add/:movie</li>
+                    <ul>
+                        <li>Allows user to add a movie to their favorites list</li>
+                    </ul>
+            </ul>
+
+        </ul>
+
+        <ul id="put-requests">
+            <li><strong>PUT Requests</strong></li>
+                <ul>
+                    <li>/remove_acct/:userID</li>
+                        <ul>
+                            <li>Allows user to update thier user information</li>
+                        </ul>
+                </ul>
+        </ul>
+
+        <ul id="delete-requests">
+            <li><strong>DELETE Requests</strong></li>
+                <ul>
+                    <li>/:userID/favorites/delete/:movie</li>
+                        <ul>
+                            <li>Allows a user to delete a movie from their favorites list</li>
+                        </ul>
+                    <li>/remove_acct/:userID</li>
+                        <ul>
+                            <li>Allows a user to remove their account from the app</li>
+                        </ul>
+                </ul>
+        </ul>
+
+    </main>
+    
 </body>
 </html>
