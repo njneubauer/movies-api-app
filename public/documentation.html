@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
     <title>Movies_api</title>
 </head>
 <body>
@@ -24,10 +25,35 @@
                     <li>/movies</li>
                         <ul>
                             <li>Returns json data on all movies</li>
+                            <pre id="code-block">
+{        
+    title: 'Goodwill Hunting',
+    year: 1997,
+    genre: ['Drama', 'Romance'],
+    director: {
+        name: 'Gus Van Sant',
+        bio: 'Gus Van Sant was born on...etc
+        dob: 1952-7-24,
+        dod: 'alive'
+    }
+},
+...                           </pre>
                         </ul>
                     <li>/Movies/:title</li>
                         <ul>
                             <li>Reutrns json data on a single movie</li>
+                            <pre id="code-block">
+{        
+    title: 'Goodwill Hunting',
+    year: 1997,
+    genre: ['Drama', 'Romance'],
+    director: {
+        name: 'Gus Van Sant',
+        bio: 'Gus Van Sant was born on...etc
+        dob: 1952-7-24,
+        dod: 'alive'
+    }
+}                         </pre>
                         </ul>
                     <li>/genre/:genre</li>
                         <ul>
