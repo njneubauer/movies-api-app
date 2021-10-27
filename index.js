@@ -2,28 +2,30 @@ const express = require('express');
 const app = express(),
     morgan = require('morgan');
 
-let moviesList = [
+let movieList = [
     {
         title: 'The Big Lebowski',
         year: 1998,
+        plot: "Two goons mistake 'the Dude' Lebowski for a millionaire Lebowski and urinate on his rug. Trying to recompense his rug from the wealthy Lebowski, he gets entwined in an intricate kidnapping case.",
         genre: ['Comedy', 'Crime', 'Sport'],
         director: [
             {   
                 name: 'Joel Coen',
                 bio: 'Joel Coen was born on November 29, 1954 in Minneapolis, Minnesota, USA as Joel Daniel Coen. He is a producer and writer, known for The Ballad of Buster Scruggs (2018), Fargo (1996) and Barton Fink (1991). He has been married to Frances McDormand since April 1, 1984. They have one child.',
                 dob: 1954-11-29,
-                dod: ''
+                dod: 'alive'
             },
             {   
                 name: 'Ethan Coen',
                 bio: 'The younger brother of Joel, Ethan Coen is an Academy Award and Golden Globe winning writer, producer and director coming from small independent films to big profile Hollywood films. He was born on September 21, 1957 in Minneapolis, Minnesota. In some films of the brothers- Ethan & Joel wrote, Joel directed and Ethan produced - with both editing under the name of Roderick Jaynes; but in 2004 they started to share the three main duties plus editing. Each film bring its own quality, creativity, art and with one project more daring the other.',
                 dob: 1957-9-21,
                 dod: 'alive'
-            },
+            }
         ]
     },
     {        
         title: 'Goodwill Hunting',
+        plot: "Will Hunting, a genius in mathematics, solves all the difficult mathematical problems. When he faces an emotional crisis, he takes help from psychiatrist Dr Sean Maguireto, who helps him recover.",
         year: 1997,
         genre: ['Drama', 'Romance'],
         director: {
@@ -36,6 +38,7 @@ let moviesList = [
     {
         title: 'One Flew Over the Cuckoo\'s Nest',
         year: 1975,
+        plot: "In order to escape the prison labour, McMurphy, a prisoner, fakes insanity and is shifted to the special ward for the mentally unstable. In this ward, he must rise up against a cruel nurse, Ratched.",
         genre: ['Drama'],
         director: {
             name: 'Milos Forman',
@@ -47,6 +50,7 @@ let moviesList = [
     {
         title: 'Pulp Fiction',
         year: 1994,
+        plot: "In the realm of underworld, a series of incidents intertwines the lives of two Los Angeles mobsters, a gangster's wife, a boxer and two small-time criminals.",
         genre: ['Crime', 'Drama'],
         director: {
             name: 'Quentin Tarantino',
@@ -58,6 +62,7 @@ let moviesList = [
     {
         title: 'Jaws',
         year: 1975,
+        plot: "A police chief, a marine scientist and a fisherman spring into action after a white shark terrorises the inhabitants of Amity, a quiet island.",
         genre: ['Adventure', 'Thriller'],
         director: {
             name: 'Steven Spielberg',
@@ -68,6 +73,7 @@ let moviesList = [
     },
     {        
         title: 'The Dark Knight',
+        plot: "After Gordon, Dent and Batman begin an assault on Gotham's organised crime, the mobs hire the Joker, a psychopathic criminal mastermind who offers to kill Batman and bring the city to its knees.",
         year: 2008,
         genre: ['Action', 'Crime', 'Drama'],
         director: {
@@ -80,6 +86,7 @@ let moviesList = [
     {        
         title: 'Back to the Future',
         year: 1985,
+        plot: "Marty travels back in time using an eccentric scientist's time machine. However, he must make his high-school-aged parents fall in love in order to return to the present.",
         genre: ['Adventure', 'Comedy', 'Sci-Fi'],
         director: {
             name: 'Robert Zemeckis',
@@ -91,6 +98,7 @@ let moviesList = [
     {
         title: 'Catch Me If You Can',
         year: 2002,
+        plot: "Notorious con artist Frank Abagnale has duped people worth millions of dollars with his masterful art of deception. With his scams getting bolder, he is soon pursued by FBI agent Carl Hanratty.",
         genre: ['Biography', 'Crime', 'Drama'],
         director: {
             name: 'Steven Spielberg',
@@ -102,6 +110,7 @@ let moviesList = [
     {
         title: 'The Conjouring',
         year: 2013,
+        plot: "The Perron family moves into a farmhouse where they experience paranormal phenomena. They consult demonologists, Ed and Lorraine Warren, to help them get rid of the evil entity haunting them.",
         director: {
             name: 'James Wan',
             bio: "James Wan (born 26 February 1977) is an Australian film producer, screenwriter and film director of Malaysian Chinese descent. He is widely known for directing the horror film Saw (2004) and creating Billy the puppet. Wan has also directed Dead Silence (2007), Death Sentence (2007), Insidious (2010), The Conjuring (2013) and Furious 7 (2015).",
@@ -112,6 +121,7 @@ let moviesList = [
     {
         title: '500 Days of Summer',
         year: 2009,
+        plot: "Tom revisits the approximate one year he shared with Summer, the girl he thought he could spend the rest of his life with. She, on the other hand, does not believe in relationships or boyfriends.",
         director: {
             name: 'Marc Webb',
             bio: 'Marc Webb was born on August 31, 1974. He is a producer and director, known for 500 Days of Summer (2009), Gifted (2017) and Crazy Ex-Girlfriend (2015). He has been married to Jane P. Herman since October 4, 2019. They have two children.',
@@ -133,14 +143,14 @@ res.send('Welcome to the MyFix App!');
 
 // returns a list of all movies
 app.get('/movies', (req, res)=>{
-    res.json(moviesList);
+    res.json(movieList);
 });
 
 // returns a data about a single movie
 app.get('/movies/:title', (req, res)=>{
-    res.send('Successful GET request returning data on a single movie');
-    res.json(moviesList.find((movie)=>{
-        return movie.title.toLocaleLowerCase() === req.params.movie.toLocaleLowerCase();
+    // res.send('Successful GET request returning data on a single movie');
+    res.json(movieList.find((movie)=>{
+        return movie.title.toLocaleLowerCase() === req.params.title.toLocaleLowerCase();
     }));
 });
 
@@ -156,7 +166,7 @@ app.get('/directors', (req, res)=>{
 
 // return data about a director (bio, birth year, death year etc.)
 app.get('/directors/:director', (req, res)=>{
-   res.send('Successful GET request to return data about a director');
+    res.send('Successful GET request to return data about a director');
 });
 
 // POST REQUESTS
