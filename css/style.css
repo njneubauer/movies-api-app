@@ -1,0 +1,15 @@
+pre {
+    display: inline-grid;
+    padding: 10px 20px;
+    background-color: rgb(233, 233, 233);
+
+}
+
+ul {
+    line-height: 1.5;
+}
+
+#get-requests, #post-requests, #put-requests, #delete-requests {
+    list-style-type: none;
+    padding-left: 0;
+}
