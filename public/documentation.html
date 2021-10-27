@@ -12,8 +12,8 @@
         <h1>Movies API Documentation</h1>
             <br>
         <h2>Objective</h2>
-            <p>To build a movies api that allows users to browser movie selections and obtain information 
-                about the movie such as: genre, description, actors/actresses, and ratings.
+            <p>To build a server-side component of a movie API that allows access to 
+                basic movie information: description, year of release, and director information.
             </p>
     </head>
 
@@ -25,47 +25,79 @@
                     <li>/movies</li>
                         <ul>
                             <li>Returns json data on all movies</li>
+                            <li>Response Example:</li>
                             <pre id="code-block">
-{        
-    title: 'Goodwill Hunting',
-    year: 1997,
-    genre: ['Drama', 'Romance'],
-    director: {
-        name: 'Gus Van Sant',
-        bio: 'Gus Van Sant was born on...etc
-        dob: 1952-7-24,
-        dod: 'alive'
+{
+    "title": "Jaws",
+    "year": 1975,
+    "genre": [
+        "Adventure",
+        "Thriller"
+    ],
+    "director": {
+        "name": "Steven Spielberg",
+        "bio": "One of the most influential personalities...etc,
+        "dob": 1916,
+        "dod": "alive"
     }
 },
 ...                           </pre>
                         </ul>
-                    <li>/Movies/:title</li>
+                    <li>/movies/:title</li>
                         <ul>
                             <li>Reutrns json data on a single movie</li>
+                            <li>Response Example:</li>
                             <pre id="code-block">
-{        
-    title: 'Goodwill Hunting',
-    year: 1997,
-    genre: ['Drama', 'Romance'],
-    director: {
-        name: 'Gus Van Sant',
-        bio: 'Gus Van Sant was born on...etc
-        dob: 1952-7-24,
-        dod: 'alive'
+{
+    "title": "Jaws",
+    "year": 1975,
+    "genre": [
+        "Adventure",
+        "Thriller"
+    ],
+    "director": {
+        "name": "Steven Spielberg",
+        "bio": "One of the most influential personalities...etc,
+        "dob": 1916,
+        "dod": "alive"
     }
-}                         </pre>
+}                           </pre>
                         </ul>
                     <li>/genre/:genre</li>
                         <ul>
                             <li>Returns json data about a genre</li>
+                            <li>Response Example:</li>
+                            <pre id="code-block">
+{
+    "title": "Jaws",
+    "genre": [
+        "Adventure",
+        "Thriller"
+    ],
+}                           </pre>
                         </ul>
                     <li>/directors</li>
                         <ul>
                             <li>Reutnrs a list of all directors</li>
+                            <li>Response Example:</li>
+                            "directors": [
+                                "Ethan Coen",
+                                "Gus Van Sant",
+                                "Milos Forman",
+                                "Quentin Tarantino",
+                            ]
                         </ul>
                     <li>/directors/:director</li>
                         <ul>
                             <li>Returns json data about a single director</li>
+                            <li>Response Example:</li>
+                            <pre id="code-block">
+"director": {
+    "name": "Steven Spielberg",
+    "bio": "One of the most influential personalities...etc,
+    "dob": 1916,
+    "dod": "alive"
+}                           </pre>
                         </ul>
                 </ul>
         </ul>
@@ -75,7 +107,8 @@
             <ul>
                 <li>/registration</li>
                     <ul>
-                        <li>Registers new user</li>
+                        <li>Registers a new user</li>
+                        <li>Responds with text that a "new user has been added!"</li>
                     </ul>
                 <li>/:userID/favorites/add/:movie</li>
                     <ul>
