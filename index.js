@@ -1,13 +1,21 @@
 const express = require('express');
 const app = express(),
     morgan = require('morgan');
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+const Genres = Models.Genre;
+
+mongoose.connect('mongodb://localhost:27017/MyFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
 let movieList = [
     {
         title: 'The Big Lebowski',
         year: 1998,
         plot: "Two goons mistake 'the Dude' Lebowski for a millionaire Lebowski and urinate on his rug. Trying to recompense his rug from the wealthy Lebowski, he gets entwined in an intricate kidnapping case.",
-        genre: ['Comedy', 'Crime', 'Sport'],
+        genre: ['Comedy', 'Crime'],
         director: [
             {   
                 name: 'Joel Coen',
@@ -111,6 +119,7 @@ let movieList = [
         title: 'The Conjouring',
         year: 2013,
         plot: "The Perron family moves into a farmhouse where they experience paranormal phenomena. They consult demonologists, Ed and Lorraine Warren, to help them get rid of the evil entity haunting them.",
+        genre: ['Horror', 'Thriller'],
         director: {
             name: 'James Wan',
             bio: "James Wan (born 26 February 1977) is an Australian film producer, screenwriter and film director of Malaysian Chinese descent. He is widely known for directing the horror film Saw (2004) and creating Billy the puppet. Wan has also directed Dead Silence (2007), Death Sentence (2007), Insidious (2010), The Conjuring (2013) and Furious 7 (2015).",
@@ -122,6 +131,7 @@ let movieList = [
         title: '500 Days of Summer',
         year: 2009,
         plot: "Tom revisits the approximate one year he shared with Summer, the girl he thought he could spend the rest of his life with. She, on the other hand, does not believe in relationships or boyfriends.",
+        genre: ['Drama', 'Romance'],
         director: {
             name: 'Marc Webb',
             bio: 'Marc Webb was born on August 31, 1974. He is a producer and director, known for 500 Days of Summer (2009), Gifted (2017) and Crazy Ex-Girlfriend (2015). He has been married to Jane P. Herman since October 4, 2019. They have two children.',
@@ -130,6 +140,7 @@ let movieList = [
         }
     }
 ];
+
 // logger
 app.use(morgan('common'));
 // static file response documentation.html file
@@ -138,25 +149,45 @@ app.use('/documentation.html', express.static('public/documentation.html'));
 // GET REQUESTS
 
 app.get('/', function (req, res) {
-res.send('Welcome to the MyFix App!');
+    res.send('Welcome to the MyFix App!');
 })
 
 // returns a list of all movies
 app.get('/movies', (req, res)=>{
-    res.json(movieList);
+    // get all movie documents
+    Movies.find({}).then((allMovies=>{
+        res.json(allMovies);    
+    }))
 });
 
-// returns a data about a single movie
+// returns a document about a single movie
 app.get('/movies/:title', (req, res)=>{
-    // res.send('Successful GET request returning data on a single movie');
-    res.json(movieList.find((movie)=>{
-        return movie.title.toLocaleLowerCase() === req.params.title.toLocaleLowerCase();
-    }));
+    // set request param to variable
+    const movieTitle = req.params.title;
+    // query movies collection by movie title (case insensitive)
+    Movies.find({title: movieTitle}).collation({locale:"en", strength: 2}).then((movie)=>{
+        res.json(movie);
+    });
 });
 
 // returns a list by genre
 app.get('/genre/:genre', (req, res)=>{
-    res.send('Successful GET request for movies by genre');
+    // set request genre string to lowercase
+    let genre = req.params.genre.toLocaleLowerCase();
+    // capitalize first letter of genre string
+    let movieGenre = genre.charAt(0).toUpperCase() + genre.slice(1);
+    // get objectID of genre from request
+    Genres.find({name: movieGenre}).then((genre)=>{
+        // get objectID of genre in request
+        const genreID = genre[0]._id;
+        // query movies collection and find all movies that match genreID
+        Movies.find({genre: genreID}).then((movies)=>{
+            res.json(movies);
+        });
+    }).catch((err) => {
+          console.error(err);
+          res.status(500).send('Error: ' + err);
+        });
 });
 
 // return a list of all directors
