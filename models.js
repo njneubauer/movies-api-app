@@ -3,26 +3,17 @@ const mongoose = require('mongoose');
 let movieSchema = mongoose.Schema({
     title: {type: String, required: true},
     year: {type: Number, required: true},
-    description: {type: String, required: true},
-    genre: {
-        name: String,
-        description: String
-    },
-    director: {
-        name: String,
-        bio: String
-    },
-    actors: [String],
+    plot: {type: String, required: true},
+    director: [{type: mongoose.Schema.Types.ObjectId, ref: 'Director'}],
+    genre: [{type: mongoose.Schema.Types.ObjectId, ref: 'Genre'}],
     imageUrl: String,
-    featured: Boolean
 });
 
-let userSchema = mongoose.Schema({
-    Username: {type: String, reuqired: true},
-    Password: {type: String, reuqired: true},
-    Email: {type: String, required: true},
-    Birthday: Date,
-    FavoriteMovies: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movie'}]
+let directorSchema = mongoose.Schema({
+    name: {type: String, required: true},
+    bio: String,
+    birthday: {type: Date, required: true},
+    deathday: Date
 });
 
 let genreSchema = mongoose.Schema({
@@ -30,10 +21,20 @@ let genreSchema = mongoose.Schema({
     description: String
 });
 
-let Movie = mongoose.model('movies', movieSchema,);
-let User = mongoose.model('users', userSchema);
-let Genre = mongoose.model('genres', genreSchema);
+let userSchema = mongoose.Schema({
+    username: {type: String, required: true, unique: true},
+    password: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
+    birthday: {type: Date, required: true},
+    favoriteMovies: [{type: mongoose.Schema.Types.ObjectId, ref: 'Movie'}]
+});
 
-module.exports.Movie = Movie;
-module.exports.User = User;
-module.exports.Genre = Genre;
+let Movies = mongoose.model('Movie', movieSchema);
+let Genres = mongoose.model('Genre', genreSchema);
+let Directors = mongoose.model('Director', directorSchema);
+let Users = mongoose.model('User', userSchema);
+
+module.exports.Movies = Movies;
+module.exports.Users = Users;
+module.exports.Genres = Genres;
+module.exports.Directors = Directors;

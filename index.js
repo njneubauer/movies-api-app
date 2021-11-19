@@ -4,9 +4,10 @@ const app = express(),
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
-const Movies = Models.Movie;
-const Users = Models.User;
-const Genres = Models.Genre;
+const Movies = Models.Movies;
+const Directors = Models.Directors;
+const Genres = Models.Genres;
+const Users = Models.Users;
 
 mongoose.connect('mongodb://localhost:27017/MyFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -171,7 +172,7 @@ app.get('/movies/:title', (req, res)=>{
 });
 
 // returns a list by genre
-app.get('/genre/:genre', (req, res)=>{
+app.get('/movies/genre/:genre', (req, res)=>{
     // set request genre string to lowercase
     let genre = req.params.genre.toLocaleLowerCase();
     // capitalize first letter of genre string
@@ -192,20 +193,45 @@ app.get('/genre/:genre', (req, res)=>{
 
 // return a list of all directors
 app.get('/directors', (req, res)=>{
-    res.send('Successful GET request to return a list of directors')
+    
  });
 
 // return data about a director (bio, birth year, death year etc.)
 app.get('/directors/:director', (req, res)=>{
-    res.send('Successful GET request to return data about a director');
+    const directorName = req.params.director;
+    console.log(directorName);
+    Directors.find({name: directorName}).collation({ locale: "en", strength: 2 }).then((director)=>{
+        res.json(director);
+    });
 });
 
 // POST REQUESTS
 
 // register a new user
 app.post('/registration', (req,res)=>{
-    res.send('Successful POST request to register user');
+    Users.findOne({ username: req.body.username }).then((user)=>{
+        if (user) {
+            return res.status(400).send(req.body.username + 'already exists');
+        }
+        else {
+            Users.create({
+                username: req.body.username,
+                password: req.body.password,
+                email: req.body.email,
+                birthday: req.body.birthday
+            }).then((user)=>{res.status(200),json(user)})
+            .catch((error)=>{
+                console.error(error);
+                res.status(500).send('Error: ' + error);
+            })
+        }
+    })
+    .catch((error)=>{
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+    });
 });
+
 // add movie to users favorites list
 app.post('/:userID/favorites/add/:movie', (req,res)=>{
     res.send('Successful POST request to add a movie to favorites list');
@@ -232,7 +258,7 @@ app.delete('/remove_acct/:userID', (req,res)=>{
 // error handeler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(500).send('Error: ' + err);
   });
 
   app.listen(8080, ()=>{

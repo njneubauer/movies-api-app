@@ -10,7 +10,6 @@
 <body>
     <head>
         <h1>Movies API Documentation</h1>
-            <br>
         <h2>Objective</h2>
             <p>To build a server-side component of a movie API that allows access to 
                 basic movie information: description, year of release, and director information.
@@ -20,7 +19,7 @@
     <main>
         <h1>Endpoints</h1>
         <ul id="get-requests">
-            <li><strong>GET Request Endpoints</strong></li>
+            <li><h3>GET Request Endpoints</h3></li>
                 <ul>
                     <li>/movies</li>
                         <ul>
@@ -41,7 +40,7 @@
         "dod": "alive"
     }
 },
-...                           </pre>
+...                         </pre>
                         </ul>
                     <li>/movies/:title</li>
                         <ul>
@@ -63,7 +62,7 @@
     }
 }                           </pre>
                         </ul>
-                    <li>/genre/:genre</li>
+                    <li>/movies/genre/:genre</li>
                         <ul>
                             <li>Returns json data about a genre</li>
                             <li>Response Example:</li>
@@ -78,14 +77,15 @@
                         </ul>
                     <li>/directors</li>
                         <ul>
-                            <li>Reutnrs a list of all directors</li>
+                            <li>Returns a list of all directors</li>
                             <li>Response Example:</li>
-                            "directors": [
-                                "Ethan Coen",
-                                "Gus Van Sant",
-                                "Milos Forman",
-                                "Quentin Tarantino",
-                            ]
+                            <pre id="code-block">
+"directors": [
+    "Ethan Coen",
+    "Gus Van Sant",
+    "Milos Forman",
+    "Quentin Tarantino",
+]                           </pre>
                         </ul>
                     <li>/directors/:director</li>
                         <ul>
@@ -103,7 +103,7 @@
         </ul>
 
         <ul id="post-requests">
-            <li><strong>POST Requests</strong></li>
+            <li><h3>POST Requests</h3></li>
             <ul>
                 <li>/registration</li>
                     <ul>
@@ -119,7 +119,7 @@
         </ul>
 
         <ul id="put-requests">
-            <li><strong>PUT Requests</strong></li>
+            <li><h3>PUT Requests</h3></li>
                 <ul>
                     <li>/remove_acct/:userID</li>
                         <ul>
@@ -129,7 +129,7 @@
         </ul>
 
         <ul id="delete-requests">
-            <li><strong>DELETE Requests</strong></li>
+            <li><h3>DELETE Requests</h3></li>
                 <ul>
                     <li>/:userID/favorites/delete/:movie</li>
                         <ul>
