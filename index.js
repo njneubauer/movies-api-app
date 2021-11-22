@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser');
 const express = require('express');
 const app = express(),
     morgan = require('morgan');
@@ -142,10 +143,14 @@ let movieList = [
     }
 ];
 
+// bodyParser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 // logger
 app.use(morgan('common'));
 // static file response documentation.html file
 app.use('/documentation.html', express.static('public/documentation.html'));
+
 
 // GET REQUESTS
 
@@ -174,18 +179,19 @@ app.get('/movies/:title', (req, res)=>{
 // returns a list by genre
 app.get('/movies/genre/:genre', (req, res)=>{
     // set request genre string to lowercase
-    let genre = req.params.genre.toLocaleLowerCase();
+    // let genre = req.params.genre.toLocaleLowerCase();
     // capitalize first letter of genre string
-    let movieGenre = genre.charAt(0).toUpperCase() + genre.slice(1);
+    // let movieGenre = genre.charAt(0).toUpperCase() + genre.slice(1);
     // get objectID of genre from request
-    Genres.find({name: movieGenre}).then((genre)=>{
+    Genres.find({name: req.params.genre}).collation({locale: 'en', strength:2}).then((genre)=>{
         // get objectID of genre in request
         const genreID = genre[0]._id;
         // query movies collection and find all movies that match genreID
         Movies.find({genre: genreID}).then((movies)=>{
             res.json(movies);
         });
-    }).catch((err) => {
+    })
+    .catch((err) => {
           console.error(err);
           res.status(500).send('Error: ' + err);
         });
@@ -193,7 +199,9 @@ app.get('/movies/genre/:genre', (req, res)=>{
 
 // return a list of all directors
 app.get('/directors', (req, res)=>{
-    
+    Directors.find().then((allDir)=>{
+        res.json(allDir);
+    });
  });
 
 // return data about a director (bio, birth year, death year etc.)
@@ -209,6 +217,7 @@ app.get('/directors/:director', (req, res)=>{
 
 // register a new user
 app.post('/registration', (req,res)=>{
+    console.log(req.body);
     Users.findOne({ username: req.body.username }).then((user)=>{
         if (user) {
             return res.status(400).send(req.body.username + 'already exists');
@@ -219,7 +228,7 @@ app.post('/registration', (req,res)=>{
                 password: req.body.password,
                 email: req.body.email,
                 birthday: req.body.birthday
-            }).then((user)=>{res.status(200),json(user)})
+            }).then((user)=>{res.status(200).json(user)})
             .catch((error)=>{
                 console.error(error);
                 res.status(500).send('Error: ' + error);
