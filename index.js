@@ -2,6 +2,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const app = express(),
     morgan = require('morgan');
+const ObjectId = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
@@ -217,7 +218,6 @@ app.get('/directors/:director', (req, res)=>{
 
 // register a new user
 app.post('/registration', (req,res)=>{
-    console.log(req.body);
     Users.findOne({ username: req.body.username }).then((user)=>{
         if (user) {
             return res.status(400).send(req.body.username + 'already exists');
@@ -242,8 +242,32 @@ app.post('/registration', (req,res)=>{
 });
 
 // add movie to users favorites list
-app.post('/:userID/favorites/add/:movie', (req,res)=>{
-    res.send('Successful POST request to add a movie to favorites list');
+app.post('/user/:userID/favorites/add/:movie', (req,res)=>{
+    console.log(req.params.movie);
+    Movies.findOne({title: req.params.movie}).then((movie)=>{
+        console.log(movie._id);
+        let movieID = movie._id;
+        return movieID;
+    }).then((movieID)=>{
+        movieObjectId = new ObjectId(movieID);
+        Users.findOneAndUpdate(
+            // Query
+            {_id: req.params.userID},
+            // Update
+            {$push: {favoriteMovies: movieObjectId}},
+            // options
+            {new: true},
+            (err, updatedUser)=>{
+                if (err){
+                    console.error(error);
+                    res.status(500).send('Error: ' + error);
+                }
+                else {
+                    res.json(updatedUser);
+                }
+            }
+        );
+    });
 });
 
 // PUT Requests
