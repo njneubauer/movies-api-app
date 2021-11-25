@@ -242,39 +242,52 @@ app.post('/registration', (req,res)=>{
 });
 
 // add movie to users favorites list
-app.post('/user/:userID/favorites/add/:movie', (req,res)=>{
-    console.log(req.params.movie);
-    Movies.findOne({title: req.params.movie}).then((movie)=>{
-        console.log(movie._id);
+app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
+    Movies.findOne({title: req.params.movieTitle}).then((movie)=>{
         let movieID = movie._id;
         return movieID;
     }).then((movieID)=>{
         movieObjectId = new ObjectId(movieID);
-        Users.findOneAndUpdate(
-            // Query
-            {_id: req.params.userID},
-            // Update
-            {$push: {favoriteMovies: movieObjectId}},
-            // options
-            {new: true},
-            (err, updatedUser)=>{
-                if (err){
-                    console.error(error);
-                    res.status(500).send('Error: ' + error);
+        if ( Users.find({_id: req.params.userID, favoriteMovies: movieObjectId}) ){
+            res.send(`User has already added "${req.params.movieTitle}" to favorites`)
+        }
+        else {
+            Users.findOneAndUpdate(
+                // Query
+                {_id: req.params.userID},
+                // Update
+                {$addToSet: {favoriteMovies: movieObjectId}},
+                // options
+                {new: true},
+                (err, updatedUser)=>{
+                    if (err){
+                        console.error(error);
+                        res.status(500).send('Error: ' + error);
+                    }
+                    else {
+                        res.json(updatedUser);
+                    }
                 }
-                else {
-                    res.json(updatedUser);
-                }
-            }
-        );
+            );
+        }
     });
 });
 
 // PUT Requests
 
 // update user info
-app.put('/:userID/update/user_info', (req,res)=>{
-    res.send('Successful PUT request to update user info (username)');
+app.put('/user/:userID/update', (req,res)=>{
+    let userId = new ObjectId(req.params.userID);
+    Users.findOneAndUpdate(
+        {_id: userId},
+        {
+            username: req.body.username,
+            username: req.body.username,
+            password: req.body.password,
+            email: req.body.email,
+            birthday: req.body.birthday
+        }
+    )
 });
 
 // DELETE REQUESTS
