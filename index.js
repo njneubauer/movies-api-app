@@ -259,13 +259,13 @@ app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
                 {$addToSet: {favoriteMovies: movieObjectId}},
                 // options
                 {new: true},
-                (err, updatedUser)=>{
+                (err, updatedFavorites)=>{
                     if (err){
                         console.error(error);
                         res.status(500).send('Error: ' + error);
                     }
                     else {
-                        res.json(updatedUser);
+                        res.json(updatedFavorites);
                     }
                 }
             );
@@ -277,17 +277,27 @@ app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
 
 // update user info
 app.put('/user/:userID/update', (req,res)=>{
-    let userId = new ObjectId(req.params.userID);
     Users.findOneAndUpdate(
-        {_id: userId},
-        {
-            username: req.body.username,
-            username: req.body.username,
-            password: req.body.password,
-            email: req.body.email,
-            birthday: req.body.birthday
+        {_id: req.params.userID},
+        {$set:
+            {
+                username: req.body.username,
+                password: req.body.password,
+                email: req.body.email,
+                birthday: req.body.birthday
+            }
+        },
+        {new: true},
+        (err, updatedUser)=>{
+            if(err){
+                console.error(error);
+                res.status('Error: ' + error);
+            }
+            else{
+                res.json(updatedUser);
+            }
         }
-    )
+    );
 });
 
 // DELETE REQUESTS
