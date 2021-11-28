@@ -179,11 +179,7 @@ app.get('/movies/:title', (req, res)=>{
 
 // returns a list by genre
 app.get('/movies/genre/:genre', (req, res)=>{
-    // set request genre string to lowercase
-    // let genre = req.params.genre.toLocaleLowerCase();
-    // capitalize first letter of genre string
-    // let movieGenre = genre.charAt(0).toUpperCase() + genre.slice(1);
-    // get objectID of genre from request
+    // find genre by name
     Genres.find({name: req.params.genre}).collation({locale: 'en', strength:2}).then((genre)=>{
         // get objectID of genre in request
         const genreID = genre[0]._id;
@@ -200,6 +196,7 @@ app.get('/movies/genre/:genre', (req, res)=>{
 
 // return a list of all directors
 app.get('/directors', (req, res)=>{
+    // find & return all director documents
     Directors.find().then((allDir)=>{
         res.json(allDir);
     });
@@ -207,9 +204,8 @@ app.get('/directors', (req, res)=>{
 
 // return data about a director (bio, birth year, death year etc.)
 app.get('/directors/:director', (req, res)=>{
-    const directorName = req.params.director;
-    console.log(directorName);
-    Directors.find({name: directorName}).collation({ locale: "en", strength: 2 }).then((director)=>{
+    // find director by name (case insensitive) and return document
+    Directors.find({name: req.params.director}).collation({ locale: "en", strength: 2 }).then((director)=>{
         res.json(director);
     });
 });
@@ -218,6 +214,7 @@ app.get('/directors/:director', (req, res)=>{
 
 // register a new user
 app.post('/registration', (req,res)=>{
+    // find user, if exists return send message ELSE create new user
     Users.findOne({ username: req.body.username }).then((user)=>{
         if (user) {
             return res.status(400).send(req.body.username + 'already exists');
@@ -243,6 +240,7 @@ app.post('/registration', (req,res)=>{
 
 // add movie to users favorites list
 app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
+    // find movie objectID
     Movies.findOne({title: req.params.movieTitle}).collation({locale: "en", strength:2})
     .then((movie)=>{
         let movieID = movie._id;
@@ -251,6 +249,7 @@ app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
         console.error(error);
         res.status(500).send('Error: ' + error);
     }).then((movieID)=>{
+        // use movieID to update user favorites list
         Users.findOneAndUpdate(
             {_id: req.params.userID},
             {$addToSet: {favoriteMovies: movieID}},
@@ -275,6 +274,7 @@ app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
 
 // update user info
 app.put('/user/:userID/update', (req,res)=>{
+    // update user info and return updated document
     Users.findOneAndUpdate(
         {_id: req.params.userID},
         {$set:
@@ -306,7 +306,6 @@ app.delete('/:userID/favorites/delete/:movieTitle', (req,res)=>{
         let movieID = movie._id;
         return movieID;
     }).then((movieId)=>{
-        console.log(movieId);
         Users.findOneAndRemove(
             {_id: req.params.userID, favoriteMovies: movieId._id}
         ).then((movie)=>{
@@ -314,19 +313,20 @@ app.delete('/:userID/favorites/delete/:movieTitle', (req,res)=>{
                 res.status(400).send("Movie doesn't exist in user's favorites list");
             }
             else {
-                res.status(200).send(`${req.params.movieTitle} has been removed from user's favorites list`)
+                res.status(200).send(`${req.params.movieTitle} has been removed from user's favorites list`);
             }
         });
     });
 });
 // deregister an existing user
 app.delete('/remove_acct/:userID', (req,res)=>{
+    // remove user by objectID, notify if user doesn't exist
     Users.findOneAndRemove({_id: req.params.userID}).then((user)=>{
         if (!user){
-            res.status(400).send("user does not exist")
+            res.status(400).send("user does not exist");
         }
         else {
-            res.status(200).send("user has been successfully removed")
+            res.status(200).send("user has been successfully removed");
         }
     });
 });
@@ -338,5 +338,5 @@ app.use((err, req, res, next) => {
   });
 
   app.listen(8080, ()=>{
-    console.log('App is listening on port 8080')
+    console.log('App is listening on port 8080');
 });
