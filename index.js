@@ -243,33 +243,31 @@ app.post('/registration', (req,res)=>{
 
 // add movie to users favorites list
 app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
-    Movies.findOne({title: req.params.movieTitle}).then((movie)=>{
+    Movies.findOne({title: req.params.movieTitle}).collation({locale: "en", strength:2})
+    .then((movie)=>{
         let movieID = movie._id;
         return movieID;
+    }).catch((error)=>{
+        console.error(error);
+        res.status(500).send('Error: ' + error);
     }).then((movieID)=>{
-        movieObjectId = new ObjectId(movieID);
-        if ( Users.find({_id: req.params.userID, favoriteMovies: movieObjectId}) ){
-            res.send(`User has already added "${req.params.movieTitle}" to favorites`)
-        }
-        else {
-            Users.findOneAndUpdate(
-                // Query
-                {_id: req.params.userID},
-                // Update
-                {$addToSet: {favoriteMovies: movieObjectId}},
-                // options
-                {new: true},
-                (err, updatedFavorites)=>{
-                    if (err){
-                        console.error(error);
-                        res.status(500).send('Error: ' + error);
-                    }
-                    else {
-                        res.json(updatedFavorites);
-                    }
+        Users.findOneAndUpdate(
+            {_id: req.params.userID},
+            {$addToSet: {favoriteMovies: movieID}},
+            {new: true},
+            (err, updatedFavMovies)=>{
+                if (err){
+                    console.error(error);
+                    res.status(500).send('Error: ' + error);
                 }
-            );
-        }
+                else {
+                    res.json(updatedFavMovies);
+                }
+            }
+        );    
+    }).catch((error)=>{
+        console.error(error);
+        res.status(500).send('Error: ' + error);
     });
 });
 
@@ -303,12 +301,34 @@ app.put('/user/:userID/update', (req,res)=>{
 // DELETE REQUESTS
 
 // delete movie from user's favorites list
-app.delete('/:userID/favorites/delete/:movie', (req,res)=>{
-    res.send('Successful DELETE request to remove a movie to favorites list');
+app.delete('/:userID/favorites/delete/:movieTitle', (req,res)=>{
+    Movies.findOne({title: req.params.movieTitle}).collation({locale:"en", strength:2}).then((movie)=>{
+        let movieID = movie._id;
+        return movieID;
+    }).then((movieId)=>{
+        console.log(movieId);
+        Users.findOneAndRemove(
+            {_id: req.params.userID, favoriteMovies: movieId._id}
+        ).then((movie)=>{
+            if(!movie){
+                res.status(400).send("Movie doesn't exist in user's favorites list");
+            }
+            else {
+                res.status(200).send(`${req.params.movieTitle} has been removed from user's favorites list`)
+            }
+        });
+    });
 });
 // deregister an existing user
 app.delete('/remove_acct/:userID', (req,res)=>{
-    res.send('Successful DELETE request to remove user acct');
+    Users.findOneAndRemove({_id: req.params.userID}).then((user)=>{
+        if (!user){
+            res.status(400).send("user does not exist")
+        }
+        else {
+            res.status(200).send("user has been successfully removed")
+        }
+    });
 });
 
 // error handeler
