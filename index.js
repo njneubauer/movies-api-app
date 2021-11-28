@@ -319,9 +319,10 @@ app.delete('/:userID/favorites/delete/:movieTitle', (req,res)=>{
     });
 });
 // deregister an existing user
-app.delete('/remove_acct/:userID', (req,res)=>{
+app.delete('/remove/:userID', (req,res)=>{
     // remove user by objectID, notify if user doesn't exist
     Users.findOneAndRemove({_id: req.params.userID}).then((user)=>{
+        console.log(user);
         if (!user){
             res.status(400).send("user does not exist");
         }
