@@ -149,9 +149,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 // logger
 app.use(morgan('common'));
+
+app.use(express.static('public'));
 // static file response documentation.html file
 app.use('/documentation.html', express.static('public/documentation.html'));
-
 
 // GET REQUESTS
 
@@ -162,31 +163,132 @@ app.get('/', function (req, res) {
 // returns a list of all movies
 app.get('/movies', (req, res)=>{
     // get all movie documents
-    Movies.find({}).then((allMovies=>{
+    Movies.aggregate([
+       {
+            $lookup: {
+                from: "genres",
+                localField: "genre",
+                foreignField: "_id",
+                as: "genreNames"
+            }
+        },
+        {
+            $lookup: {
+                from: "directors",
+                localField: "director",
+                foreignField: "_id",
+                as: "directorInfo"
+            }
+        },
+        {
+            $project: {
+                title: 1,
+                plot: 1,
+                year: 1,
+                imageUrl: 1,
+                "directorInfo.name": 1,
+                "directorInfo.bio": 1,
+                "genreNames.name": 1
+            }
+        }
+    ]).then((allMovies)=>{
         res.json(allMovies);    
-    }))
+    });
 });
 
 // returns a document about a single movie
-app.get('/movies/:title', (req, res)=>{
+app.get('/movies/:movieTitle', (req, res)=>{
     // set request param to variable
-    const movieTitle = req.params.title;
+    const movieTitle = req.params.movieTitle;
     // query movies collection by movie title (case insensitive)
-    Movies.find({title: movieTitle}).collation({locale:"en", strength: 2}).then((movie)=>{
+    Movies.aggregate([
+        {
+             $lookup: {
+                 from: "genres",
+                 localField: "genre",
+                 foreignField: "_id",
+                 as: "genreNames"
+             }
+         },
+         {
+             $lookup: {
+                 from: "directors",
+                 localField: "director",
+                 foreignField: "_id",
+                 as: "directorInfo"
+             }
+         },
+         {
+             $project: {
+                 title: 1,
+                 plot: 1,
+                 year: 1,
+                 imageUrl: 1,
+                 "directorInfo.name": 1,
+                 "directorInfo.bio": 1,
+                 "genreNames.name": 1
+             }
+        }
+    ]).then((movie)=>{
         res.json(movie);
     });
 });
 
-// returns a list by genre
-app.get('/movies/genre/:genre', (req, res)=>{
+// returns a list of all genres and their descriptions
+app.get('/genres', (req,res)=>{
+    Genres.find().then((genres)=>{
+        res.json(genres);
+    });
+});
+
+// returns a single genre and it's description
+app.get('/genres/:genre', (req,res)=>{
+    Genres.find({name: req.params.genre}).collation({locale: "en", strength:2}).then((genres)=>{        
+        res.json(genres);
+    });
+});
+
+// returns movies by genre
+app.get('/movies/genres/:genre', (req, res)=>{
     // find genre by name
     Genres.find({name: req.params.genre}).collation({locale: 'en', strength:2}).then((genre)=>{
         // get objectID of genre in request
         const genreID = genre[0]._id;
         // query movies collection and find all movies that match genreID
-        Movies.find({genre: genreID}).then((movies)=>{
-            res.json(movies);
-        });
+        Movies.aggregate([
+            {
+                $match: {genre: genreID}
+            },
+            {
+                $lookup: {
+                    from: "genres",
+                    localField: "genre",
+                    foreignField: "_id",
+                    as: "genreNames"
+                }
+            },
+            {
+                $lookup: {
+                    from: "directors",
+                    localField: "director",
+                    foreignField: "_id",
+                    as: "directorInfo"
+                }
+            },
+            {
+                $project: {
+                    title: 1,
+                    plot: 1,
+                    year: 1,
+                    imageUrl: 1,
+                    "directorInfo.name": 1,
+                    "directorInfo.bio": 1,
+                    "genreNames.name": 1
+                }
+            }
+        ]).then((movieInfo)=>{
+            res.json(movieInfo);
+        })
     })
     .catch((err) => {
           console.error(err);
@@ -275,27 +377,34 @@ app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
 // update user info
 app.put('/user/:userID/update', (req,res)=>{
     // update user info and return updated document
-    Users.findOneAndUpdate(
-        {_id: req.params.userID},
-        {$set:
-            {
-                username: req.body.username,
-                password: req.body.password,
-                email: req.body.email,
-                birthday: req.body.birthday
-            }
-        },
-        {new: true},
-        (err, updatedUser)=>{
-            if(err){
-                console.error(error);
-                res.status('Error: ' + error);
-            }
-            else{
-                res.json(updatedUser);
-            }
+    Users.findOne({_id: req.params.userID}).then((user)=>{
+        if (!user){
+            res.send('user does not exist');
         }
-    );
+        else {
+            Users.findOneAndUpdate(
+                {_id: req.params.userID},
+                {$set:
+                    {
+                        username: req.body.username,
+                        password: req.body.password,
+                        email: req.body.email,
+                        birthday: req.body.birthday
+                    }
+                },
+                {new: true},
+                (err, updatedUser)=>{
+                    if(err){
+                        console.error(error);
+                        res.status('Error: ' + error);
+                    }
+                    else{
+                        res.json(updatedUser);
+                    }
+                }
+            );
+        }
+    });
 });
 
 // DELETE REQUESTS
@@ -324,11 +433,14 @@ app.delete('/remove/:userID', (req,res)=>{
     Users.findOneAndRemove({_id: req.params.userID}).then((user)=>{
         console.log(user);
         if (!user){
-            res.status(400).send("user does not exist");
+            res.status(400).send(req.params.userID + " user was not found");
         }
         else {
-            res.status(200).send("user has been successfully removed");
+            res.status(200).send(req.params.userID + " user has been successfully removed");
         }
+    }).catch((err)=>{
+        console.error(err);
+        res.status(500).send('Error: ' + err);
     });
 });
 

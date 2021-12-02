@@ -4,145 +4,306 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Movies_api</title>
 </head>
 <body>
-    <head>
-        <h1>Movies API Documentation</h1>
-        <h2>Objective</h2>
+
+<!-- SIDEBAR START-->
+<button id="expand-sidebar">Expand Menu</button>
+
+<div class="wrapper">
+    <nav id="sidebar" class="sidebar sidebar-open">
+        <p class="sidebar-close-x">X</p>
+       
+        <img class="popcorn-img" src="/img/popcorn_svg.svg" alt="popcorn image" style="width: 75px;">
+        <a class="sidebar-header" href="#main">
+            <h5>MyFlix </h5>
+            <h5>Documentation</h5>
+        </a>
+            <hr>
+        <ul id="nav-list" class="list-unstyled">
+            <h5 style="padding-bottom: 10px;">Route Navigation</h5>
+            <li>
+                <a class="link-dark rounded" href="#movie-routes">/movies</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#movie-routes">/movies/:movies_title</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#genre-routes">/genres</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#genre-routes">/genres/:genre</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#movie-genre-route">/movies/genres/:genre</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#director-routes">/director</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#director-routes">/director/:director</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#registration-route">/registration</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#add-fav-route">/user/:userID/favorites/:movie_title</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#update-user-route">/user/:userID/update</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#delete-routes">/:userID/favorites/delete/:movie_title</a>
+            </li>
+            <li>
+                <a class="link-dark rounded" href="#delete-routes">/remove/:userID</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- SIDEBAR END -->
+    <header id="main" class="container">
+        <h1 class="text-center">MyFlix API Documentation</h1>
+        <div class="objective-div">
+            <h3 class="text-left">Objective</h3>
             <p>To build a server-side component of a movie API that allows access to 
                 basic movie information: description, year of release, and director information.
             </p>
-    </head>
+        </div>
+    </header>
 
     <main>
-        <h1>Endpoints</h1>
-        <ul id="get-requests">
-            <li><h3>GET Request Endpoints</h3></li>
-                <ul>
-                    <li>/movies</li>
-                        <ul>
-                            <li>Returns json data on all movies</li>
-                            <li>Response Example:</li>
-                            <pre id="code-block">
-{
-    "title": "Jaws",
-    "year": 1975,
-    "genre": [
-        "Adventure",
-        "Thriller"
-    ],
-    "director": {
-        "name": "Steven Spielberg",
-        "bio": "One of the most influential personalities...etc,
-        "dob": 1916,
-        "dod": "alive"
-    }
-},
-...                         </pre>
-                        </ul>
-                    <li>/movies/:title</li>
-                        <ul>
-                            <li>Reutrns json data on a single movie</li>
-                            <li>Response Example:</li>
-                            <pre id="code-block">
-{
-    "title": "Jaws",
-    "year": 1975,
-    "genre": [
-        "Adventure",
-        "Thriller"
-    ],
-    "director": {
-        "name": "Steven Spielberg",
-        "bio": "One of the most influential personalities...etc,
-        "dob": 1916,
-        "dod": "alive"
-    }
-}                           </pre>
-                        </ul>
-                    <li>/movies/genre/:genre</li>
-                        <ul>
-                            <li>Returns json data about a genre</li>
-                            <li>Response Example:</li>
-                            <pre id="code-block">
-{
-    "title": "Jaws",
-    "genre": [
-        "Adventure",
-        "Thriller"
-    ],
-}                           </pre>
-                        </ul>
-                    <li>/directors</li>
-                        <ul>
-                            <li>Returns a list of all directors</li>
-                            <li>Response Example:</li>
-                            <pre id="code-block">
-"directors": [
-    "Ethan Coen",
-    "Gus Van Sant",
-    "Milos Forman",
-    "Quentin Tarantino",
-]                           </pre>
-                        </ul>
-                    <li>/directors/:director</li>
-                        <ul>
-                            <li>Returns json data about a single director</li>
-                            <li>Response Example:</li>
-                            <pre id="code-block">
-"director": {
-    "name": "Steven Spielberg",
-    "bio": "One of the most influential personalities...etc,
-    "dob": 1916,
-    "dod": "alive"
-}                           </pre>
-                        </ul>
-                </ul>
-        </ul>
+    <div id="main" class="container">
 
-        <ul id="post-requests">
-            <li><h3>POST Requests</h3></li>
-            <ul>
-                <li>/registration</li>
-                    <ul>
-                        <li>Registers a new user</li>
-                        <li>Responds with text that a "new user has been added!"</li>
-                    </ul>
-                <li>/user/:userID/favorites/add/:movie</li>
-                    <ul>
-                        <li>Allows user to add a movie to their favorites list</li>
-                    </ul>
-            </ul>
+<!-- GET ROUTES START -->
+        <section id="movie-routes">
+            <h4>GET /movies</h4>
+            <h4>GET /movies/:movies_title</h4>
+            <p>Descrption: Returns list or single document for movies in the database</p>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            [
+                                {
+                                    "_id": "618559dca0d9d1518158796f",
+                                    "title": "Jaws",
+                                    "year": 1975,
+                                    "plot": "When an insatiable great ...",
+                                    "imageUrl": "https://img.reelgood.com/...",
+                                    "genreNames": [
+                                        {
+                                            "name": "Adventure"
+                                        },
+                                        {
+                                            "name": "Thriller"
+                                        }
+                                    ],
+                                    "directorInfo": [
+                                        {
+                                            "name": "Steven Spielberg",
+                                            "bio": "One of the most..."
+                                        }
+                                    ]
+                                },
+                                ...
+                            ]
+                        </code>                           
+                    </pre>
+        </section>
 
-        </ul>
+        <section id="genre-routes">
+            <h4>GET /genres</h4>
+            <h4>GET /genres/:genre</h4>
+                <p>Descrption: Returns a list OR a single document about genres in the database</p>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            [
+                                {
+                                    "_id": "6189812da64de87fdf156f69",
+                                    "name": "Action",
+                                    "description": "Action film is a film genre..."
+                                },
+                            ]
+                        </code>                           
+                    </pre>
+        </section>
 
-        <ul id="put-requests">
-            <li><h3>PUT Requests</h3></li>
-                <ul>
-                    <li>/remove_acct/:userID</li>
-                        <ul>
-                            <li>Allows user to update thier user information</li>
-                        </ul>
-                </ul>
-        </ul>
+        <section id="movie-genre-route">
+            <h4>GET /movies/genres/:genre</h4>
+                <p>Descrption: Returns list of movie documents based on single genre match</p>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            [
+                                {
+                                    "_id": "61855c44a0d9d15181587970",
+                                    "title": "Goodwill Hunting",
+                                    "plot": "Will Hunting, a genius in...",
+                                    "year": 1997,
+                                    "imageUrl": "https://img.reelgood.com/...",
+                                    "genreNames": [
+                                        {
+                                            "name": "Drama"
+                                        },
+                                        {
+                                            "name": "Romance"
+                                        }
+                                    ],
+                                    "directorInfo": [
+                                        {
+                                            "name": "Gus Van Sant",
+                                            "bio": "Gus Van Sant was..."
+                                        }
+                                    ]
+                                },
+                                ...
+                            ]
+                        </code>                           
+                    </pre>
+        </section>
 
-        <ul id="delete-requests">
-            <li><h3>DELETE Requests</h3></li>
-                <ul>
-                    <li>/:userID/favorites/delete/:movie</li>
-                        <ul>
-                            <li>Allows a user to delete a movie from their favorites list</li>
-                        </ul>
-                    <li>/remove_acct/:userID</li>
-                        <ul>
-                            <li>Allows a user to remove their account from the app</li>
-                        </ul>
-                </ul>
-        </ul>
+        <section id="director-routes">
+            <h4>GET /director</h4>
+            <h4>GET /director/director_fullname</h4>
+                <p>Descrption: Returns list or a single docuemnt about director information</p>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            {
+                                "_id": "618804104c56905de44cbcff",
+                                "name": "Steven Spielberg",
+                                "bio": "One of the most influential...",
+                                "birthday": "1970-01-01T00:00:01.916Z",
+                                "deathday": null
+                            }
+                        </code>                           
+                    </pre>
+        </section>
 
+        <section id="registration-route">
+            <h4>POST /registration</h4>
+                <p>Descrption: Creates user if user credentials not in the database. </p>
+                <h5>Body:</h5>
+                    <pre class="language-json">
+                        <code>
+                            {
+                                "username": "test1",
+                                "password": "test1password",
+                                "email": "test1@yahoo.com",
+                                "birthday": "1971-5-05"
+                            }
+                        </code>
+                    </pre>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            {
+                                "username": "test1",
+                                "password": "test1password",
+                                "email": "test1@yahoo.com",
+                                "birthday": "1971-05-05T05:00:00.000Z",
+                                "favoriteMovies": [],
+                                "_id": "61a6e3c35d6cd666fdd84fb3",
+                                "__v": 0
+                            }
+                        </code>                           
+                    </pre>
+        </section>
+<!-- GET ROUTES END -->
+<!-- POST ROUTES START -->
+        <section id="add-fav-route">
+            <h4>POST /user/:userID/favorites/:movie_title</h4>
+                <p>Descrption: Adds a movie to the user's favorites list</p>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            {
+                                "_id": "61a6e3c35d6cd666fdd84fb3",
+                                "username": "test1",
+                                "password": "test1password",
+                                "email": "test1@yahoo.com",
+                                "birthday": "1971-05-05T05:00:00.000Z",
+                                "favoriteMovies": [
+                                    "6186f8a74c56905de44cbcfb"
+                                ],
+                                "__v": 0
+                        </code>
+                    </pre>
+        </section>
+
+<!-- POST ROUTES END -->
+<!-- PUT ROUTES START -->
+
+        <section id="update-user-route">
+            <h4>PUT /user/:userID/update</h4>
+                <p>Descrption: Update's user information. All required fields must be send in body.</p>
+                <h5>Body:</h5>
+                    <pre class="language-json">
+                        <code>
+                            {
+                                "username": "test123456", (required)
+                                "password": "test1password", (required)
+                                "email": "test1@yahoo.com", (required)
+                                "birthday": "1971-5-05" (required)
+                            }
+                        </code>
+                    </pre>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            {
+                                "_id": "61a6e3c35d6cd666fdd84fb3",
+                                "username": "test123456",
+                                "password": "test1password",
+                                "email": "test1@yahoo.com",
+                                "birthday": "1971-05-05T05:00:00.000Z",
+                                "favoriteMovies": [
+                                    "6186f8a74c56905de44cbcfb"
+                                ],
+                                "__v": 0
+                            }
+                        </code>
+                    </pre>
+        </section>
+
+<!-- PUT ROUTES END -->
+<!-- DELETE ROUTES START -->
+
+        <section id="delete-routes">
+            <h4>DELETE /:userID/favorites/delete/:movie_title</h4>
+                <p>Descrption: Adds a movie to the user's favorites list.</p>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code>
+                            (movie title) has been removed from user's favorites list
+                        </code>
+                    </pre>
+        </section>  
+
+        <section>
+            <h4>DELETE /remove/:userID</h4>
+                <p>Descrption: Deletes user from database.</p>
+                <h5>Response Example:</h5>
+                    <pre class="language-json">
+                        <code class="">
+                            Successful: (userID) user has been successfully removed
+                            Unsuccessful: (userID) user was not found
+                        </code>
+                    </pre>
+        </section>
+<!-- DELETE ROUTES END -->
+    </div>
     </main>
-    
+
+    <script src="/prism.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="/nav.js"></script>
 </body>
 </html>
