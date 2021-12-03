@@ -319,7 +319,7 @@ app.post('/registration', (req,res)=>{
     // find user, if exists return send message ELSE create new user
     Users.findOne({ username: req.body.username }).then((user)=>{
         if (user) {
-            return res.status(400).send(req.body.username + 'already exists');
+            return res.status(400).send(req.body.username + ' already exists');
         }
         else {
             Users.create({
@@ -431,7 +431,6 @@ app.delete('/:userID/favorites/delete/:movieTitle', (req,res)=>{
 app.delete('/remove/:userID', (req,res)=>{
     // remove user by objectID, notify if user doesn't exist
     Users.findOneAndRemove({_id: req.params.userID}).then((user)=>{
-        console.log(user);
         if (!user){
             res.status(400).send(req.params.userID + " user was not found");
         }
