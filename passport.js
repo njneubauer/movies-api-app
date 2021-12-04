@@ -6,6 +6,7 @@ const passport = require('passport'),
 require('dotenv').config();
 const jwtSecret = process.env.secretKey;
 
+
 let Users = Models.Users,
     JWTStrategy = passportJWT.Strategy,
     ExtractJWT = passportJWT.ExtractJwt;
@@ -26,7 +27,7 @@ passport.use(new LocalStrategy({
             return callback(null, false, {message: 'incorrect username or password.'});
         }
 
-        console.log('finshed')
+        console.log('finshed');
         return callback(null, user);
     });
 }));
