@@ -73,7 +73,7 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
 });
 
 // returns a document about a single movie
-app.get('/movies/:movieTitle', (req, res)=>{
+app.get('/movies/:movieTitle', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // set request param to variable
     const movieTitle = req.params.movieTitle;
     // query movies collection by movie title (case insensitive)
@@ -111,21 +111,21 @@ app.get('/movies/:movieTitle', (req, res)=>{
 });
 
 // returns a list of all genres and their descriptions
-app.get('/genres', (req,res)=>{
+app.get('/genres', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Genres.find().then((genres)=>{
         res.json(genres);
     });
 });
 
 // returns a single genre and it's description
-app.get('/genres/:genre', (req,res)=>{
+app.get('/genres/:genre', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Genres.find({name: req.params.genre}).collation({locale: "en", strength:2}).then((genres)=>{        
         res.json(genres);
     });
 });
 
 // returns movies by genre
-app.get('/movies/genres/:genre', (req, res)=>{
+app.get('/movies/genres/:genre', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find genre by name
     Genres.find({name: req.params.genre}).collation({locale: 'en', strength:2}).then((genre)=>{
         // get objectID of genre in request
@@ -173,7 +173,7 @@ app.get('/movies/genres/:genre', (req, res)=>{
 });
 
 // return a list of all directors
-app.get('/directors', (req, res)=>{
+app.get('/directors', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find & return all director documents
     Directors.find().then((allDir)=>{
         res.json(allDir);
@@ -181,7 +181,7 @@ app.get('/directors', (req, res)=>{
  });
 
 // return data about a director (bio, birth year, death year etc.)
-app.get('/directors/:director', (req, res)=>{
+app.get('/directors/:director', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find director by name (case insensitive) and return document
     Directors.find({name: req.params.director}).collation({ locale: "en", strength: 2 }).then((director)=>{
         res.json(director);
@@ -192,7 +192,7 @@ app.get('/directors/:director', (req, res)=>{
 
 // register a new user
 app.post('/registration', (req,res)=>{
-    // find user, if exists return send message ELSE create new user
+    // find user, IF exists return message message "already exists" ELSE create new user
     Users.findOne({ username: req.body.username }).then((user)=>{
         if (user) {
             return res.status(400).send(req.body.username + ' already exists');
@@ -217,15 +217,12 @@ app.post('/registration', (req,res)=>{
 });
 
 // add movie to users favorites list
-app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
+app.post('/user/:userID/favorites/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // find movie objectID
     Movies.findOne({title: req.params.movieTitle}).collation({locale: "en", strength:2})
     .then((movie)=>{
         let movieID = movie._id;
         return movieID;
-    }).catch((error)=>{
-        console.error(error);
-        res.status(500).send('Error: ' + error);
     }).then((movieID)=>{
         // use movieID to update user favorites list
         Users.findOneAndUpdate(
@@ -234,14 +231,42 @@ app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
             {new: true},
             (err, updatedFavMovies)=>{
                 if (err){
-                    console.error(error);
-                    res.status(500).send('Error: ' + error);
+                    console.error(err);
+                    res.status(500).send('Error: ' + err);
                 }
                 else {
-                    res.json(updatedFavMovies);
+                    Users.aggregate([
+                        {
+                            $match: {_id: updatedFavMovies._id}
+                        },
+                        {
+                            $lookup: {
+                                from: "movies",
+                                localField: "favoriteMovies",
+                                foreignField: "_id",
+                                as: "favoriteMoviesInfo"
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                username: 1,
+                                email: 1,
+                                favoriteMovies: 1,
+                                "favoriteMoviesInfo": {
+                                    _id: 1,
+                                    title: 1,
+                                    year: 1
+                                }
+                            }
+                        }]).then((userFavorites)=>{
+                                res.json(userFavorites);
+                            }).catch((error)=>{
+                                console.error(error);
+                                res.status(500).send('Error: ' + error);
+                            });
                 }
-            }
-        );    
+            });
     }).catch((error)=>{
         console.error(error);
         res.status(500).send('Error: ' + error);
@@ -251,11 +276,11 @@ app.post('/user/:userID/favorites/:movieTitle', (req,res)=>{
 // PUT Requests
 
 // update user info
-app.put('/user/:userID/update', (req,res)=>{
+app.put('/user/:userID/update', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // update user info and return updated document
     Users.findOne({_id: req.params.userID}).then((user)=>{
         if (!user){
-            res.send('user does not exist');
+            res.status(400).send('user does not exist');
         }
         else {
             Users.findOneAndUpdate(
@@ -278,33 +303,45 @@ app.put('/user/:userID/update', (req,res)=>{
                         res.json(updatedUser);
                     }
                 }
-            );
+            ).catch((error)=>{
+                console.error(error);
+                res.status(500).send('Error: ' + error);
+            });
         }
+    }).catch((error)=>{
+        console.error(error);
+        res.status(500).send('Error: ' + error);
     });
 });
 
 // DELETE REQUESTS
 
 // delete movie from user's favorites list
-app.delete('/:userID/favorites/delete/:movieTitle', (req,res)=>{
+app.delete('/:userID/favorites/delete/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Movies.findOne({title: req.params.movieTitle}).collation({locale:"en", strength:2}).then((movie)=>{
         let movieID = movie._id;
         return movieID;
     }).then((movieId)=>{
-        Users.findOneAndRemove(
-            {_id: req.params.userID, favoriteMovies: movieId._id}
+        Users.updateOne(
+            {_id: req.params.userID, favoriteMovies: movieId},
+            {$pull:{favoriteMovies: movieId}},
+            {new: true}
         ).then((movie)=>{
-            if(!movie){
-                res.status(400).send("Movie doesn't exist in user's favorites list");
+            if(movie.modifiedCount == 0){
+                res.status(400).send("Movie or user does not exist");
             }
             else {
                 res.status(200).send(`${req.params.movieTitle} has been removed from user's favorites list`);
             }
+        }).catch((error)=>{
+            console.error(error);
+            res.status(500).send('Error: ' + error);
         });
     });
 });
+
 // deregister an existing user
-app.delete('/remove/:userID', (req,res)=>{
+app.delete('/remove/:userID', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // remove user by objectID, notify if user doesn't exist
     Users.findOneAndRemove({_id: req.params.userID}).then((user)=>{
         if (!user){
