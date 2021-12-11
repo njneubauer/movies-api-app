@@ -3,8 +3,7 @@ const jwtSecret = process.env.secretKey;
 
 const jwt = require('jsonwebtoken'),
     passport = require('passport');
-const { initialize } = require('passport');
-
+    
 require('./passport');
 
 

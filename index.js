@@ -19,12 +19,31 @@ app.use(bodyParser.urlencoded({extended: true}));
 // logger
 app.use(morgan('common'));
 
+// import CORS and define accepted origins
+const cors = require('cors');
+
+const allowedOrigins = ['http://localhost:8080'];
+
+app.use(cors({
+    origin: (origin, callback)=>{
+        if(!origin) return callback(null, true);
+        if(allowedOrigins.indexOf(orgin) === -1){
+            let message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
+            return callback(new Error(message), false);
+        }
+        return callback(null, true)
+    }
+}));
+
 // import auth.js file and pass express() to it.
 let auth = require('./auth')(app);
 
 // require passport module and import passport.js
 const passport = require('passport');
 require('./passport');
+
+// import express-validator 
+const {check, validationResult} = require('express-validator');
 
 // static file response documentation.html file
 app.use(express.static('public'));
@@ -191,7 +210,23 @@ app.get('/directors/:director', passport.authenticate('jwt', {session: false}), 
 // POST REQUESTS
 
 // register a new user
-app.post('/registration', (req,res)=>{
+app.post('/registration',
+  // Validation logic for request
+  [
+    check('username', 'Username is required').isLength({min: 5}),
+    check('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('password', 'Password is required').not().isEmpty(),
+    check('email', 'Email does not appear to be valid').isEmail()
+  ], (req, res) => {
+
+  // check the validation object for errors
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    let hashedPassword = Users.hashPassword(req.body.password);
     // find user, IF exists return message message "already exists" ELSE create new user
     Users.findOne({ username: req.body.username }).then((user)=>{
         if (user) {
@@ -200,7 +235,7 @@ app.post('/registration', (req,res)=>{
         else {
             Users.create({
                 username: req.body.username,
-                password: req.body.password,
+                password: hashedPassword,
                 email: req.body.email,
                 birthday: req.body.birthday
             }).then((user)=>{res.status(200).json(user)})
@@ -362,6 +397,7 @@ app.use((err, req, res, next) => {
     res.status(500).send('Error: ' + err);
   });
 
-  app.listen(8080, ()=>{
-    console.log('App is listening on port 8080');
+const port = process.env.PORT || 8080;
+  app.listen(port, '0.0.0.0',()=>{
+    console.log(`App is listening on port ${port}`);
 });
