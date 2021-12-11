@@ -10,7 +10,7 @@ const Directors = Models.Directors;
 const Genres = Models.Genres;
 const Users = Models.Users;
 
-mongoose.connect('mongodb://localhost:27017/MyFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.connection_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // bodyParser
 app.use(bodyParser.json());

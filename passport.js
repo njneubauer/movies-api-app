@@ -6,7 +6,6 @@ const passport = require('passport'),
 require('dotenv').config();
 const jwtSecret = process.env.secretKey;
 
-
 let Users = Models.Users,
     JWTStrategy = passportJWT.Strategy,
     ExtractJWT = passportJWT.ExtractJwt;
