@@ -1,4 +1,4 @@
-# NickFlix API
+# MyFlix API
 
 ## \*\*\* Development in Progress \*\*\*
 
