@@ -22,7 +22,7 @@ app.use(morgan('common'));
 // import CORS and define accepted origins
 const cors = require('cors');
 
-app.use('*',cors())
+app.use('*',cors());
 
 // const allowedOrigins = ['http://localhost:8080'];
 // app.use(cors({
