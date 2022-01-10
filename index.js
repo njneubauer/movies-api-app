@@ -57,7 +57,7 @@ app.get('/', function (req, res) {
 })
 
 // returns a list of all movies
-app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
+app.get('/movies', (req, res)=>{
     // get all movie documents
     Movies.aggregate([
        {
@@ -217,6 +217,7 @@ app.post('/registration',
     check('username', 'Username is required').isLength({min: 5}),
     check('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
     check('password', 'Password is required').not().isEmpty(),
+    check('password, Password must be at least 6 characters long').isLength({min: 6}),
     check('email', 'Email does not appear to be valid').isEmail()
   ], (req, res) => {
 
