@@ -24,7 +24,7 @@ const cors = require('cors');
 
 // app.use(cors());
 
-const allowedOrigins = ['http://localhost:8080', 'http://localhost:1234', 'https://img.reelgood.com', 'https://nickflixapi.herokuapp.com'];
+const allowedOrigins = ['http://localhost:8080', 'http://localhost:1234', 'https://img.reelgood.com', 'https://nickflixapi.herokuapp.com/*'];
 app.use(cors({
     origin: (origin, callback)=>{
         if(!origin) return callback(null, true);
