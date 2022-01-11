@@ -22,7 +22,7 @@ app.use(morgan('common'));
 // import CORS and define accepted origins
 const cors = require('cors');
 
-app.use(cors());
+// app.use(cors());
 
 const allowedOrigins = ['http://localhost:8080', 'http://localhost:1234', 'https://img.reelgood.com/content/movie/*'];
 app.use(cors({
