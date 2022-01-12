@@ -58,6 +58,10 @@ app.get('/', function (req, res) {
 
 // returns a list of all movies
 app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
+    res.setHeader('Access-Control-Allow-Credentials', true);
     // get all movie documents
     Movies.aggregate([
        {
