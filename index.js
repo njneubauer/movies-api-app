@@ -21,7 +21,6 @@ app.use(morgan('common'));
 
 // import CORS and define accepted origins
 const cors = require('cors');
-
 app.use(cors());
 
 // import auth.js file and pass express() to it.
@@ -205,7 +204,7 @@ app.post('/registration',
     check('username', 'Username is required').isLength({min: 5}),
     check('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
     check('password', 'Password is required').not().isEmpty(),
-    check('password, Password must be at least 6 characters long').isLength({min: 6}),
+    check('password', 'Password must be at least 6 characters long').isLength({min: 6}),
     check('email', 'Email does not appear to be valid').isEmail()
   ], (req, res) => {
 
