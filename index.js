@@ -41,8 +41,6 @@ app.use('/documentation.html', express.static('public/documentation.html'));
 // GET REQUESTS
 
 app.get('/', function (req, res) {
-    res.header("Cross-Origin-Embedder-Policy", "require-corp");
-    res.header("Cross-Origin-Opener-Policy", "same-origin");
     res.send('Welcome to the MyFix App!');
 })
 
