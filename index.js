@@ -68,7 +68,7 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
                 title: 1,
                 plot: 1,
                 year: 1,
-                imageUrl: 1,
+                imageCode: 1,
                 "directorInfo.name": 1,
                 "directorInfo.bio": 1,
                 "genreNames.name": 1
@@ -106,7 +106,7 @@ app.get('/movies/:movieTitle', passport.authenticate('jwt', {session: false}), (
                  title: 1,
                  plot: 1,
                  year: 1,
-                 imageUrl: 1,
+                 imageCode: 1,
                  "directorInfo.name": 1,
                  "directorInfo.bio": 1,
                  "genreNames.name": 1
@@ -163,7 +163,7 @@ app.get('/movies/genres/:genre', passport.authenticate('jwt', {session: false}),
                     title: 1,
                     plot: 1,
                     year: 1,
-                    imageUrl: 1,
+                    imageCode: 1,
                     "directorInfo.name": 1,
                     "directorInfo.bio": 1,
                     "genreNames.name": 1
