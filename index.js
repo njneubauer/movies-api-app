@@ -24,18 +24,6 @@ const cors = require('cors');
 
 app.use(cors());
 
-// const allowedOrigins = ['http://localhost:8080', 'http://localhost:1234', 'https://img.reelgood.com', 'https://nickflixapi.herokuapp.com/*'];
-// app.use(cors({
-//     origin: (origin, callback)=>{
-//         if(!origin) return callback(null, true);
-//         if(allowedOrigins.indexOf(orgin) === -1){
-//             let message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
-//             return callback(new Error(message), false);
-//         }
-//         return callback(null, true)
-//     }
-// }));
-
 // import auth.js file and pass express() to it.
 let auth = require('./auth')(app);
 
@@ -58,10 +46,6 @@ app.get('/', function (req, res) {
 
 // returns a list of all movies
 app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
-    res.setHeader('Access-Control-Allow-Credentials', true);
     // get all movie documents
     Movies.aggregate([
        {
