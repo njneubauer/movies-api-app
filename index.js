@@ -22,9 +22,7 @@ app.use(morgan('common'));
 // import CORS and define accepted origins
 const cors = require('cors');
 
-app.use(cors({
-    'Cross-Origin-Embedder-Policy': 'require-corp'
-}));
+app.use(cors());
 
 // import auth.js file and pass express() to it.
 let auth = require('./auth')(app);
@@ -48,6 +46,8 @@ app.get('/', function (req, res) {
 
 // returns a list of all movies
 app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
+    res.header("Cross-Origin-Embedder-Policy", "require-corp");
+    res.header("Cross-Origin-Opener-Policy", "same-origin");
     // get all movie documents
     Movies.aggregate([
        {
