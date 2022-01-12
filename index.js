@@ -22,7 +22,7 @@ app.use(morgan('common'));
 // import CORS and define accepted origins
 const cors = require('cors');
 
-// app.use(cors());
+app.use(cors());
 
 // import auth.js file and pass express() to it.
 let auth = require('./auth')(app);
