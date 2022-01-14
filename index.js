@@ -301,15 +301,15 @@ app.post('/user/:userID/favorites/:movieTitle', passport.authenticate('jwt', {se
 // PUT Requests
 
 // update user info
-app.put('/user/:userID/update', passport.authenticate('jwt', {session: false}), (req,res)=>{
+app.put('/user/update/:username', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // update user info and return updated document
-    Users.findOne({_id: req.params.userID}).then((user)=>{
+    Users.findOne({username: req.params.username}).then((user)=>{
         if (!user){
             res.status(400).send('user does not exist');
         }
         else {
             Users.findOneAndUpdate(
-                {_id: req.params.userID},
+                {username: req.params.username},
                 {$set:
                     {
                         username: req.body.username,
