@@ -302,6 +302,7 @@ app.post('/user/:userID/favorites/:movieTitle', passport.authenticate('jwt', {se
 
 // update user info
 app.put('/user/update/:username', passport.authenticate('jwt', {session: false}), (req,res)=>{
+    let hashedPassword = Users.hashPassword(req.body.password);
     // update user info and return updated document
     Users.findOne({username: req.params.username}).then((user)=>{
         if (!user){
@@ -313,7 +314,7 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
                 {$set:
                     {
                         username: req.body.username,
-                        password: req.body.password,
+                        password: hashedPassword,
                         email: req.body.email,
                         birthday: req.body.birthday
                     }
