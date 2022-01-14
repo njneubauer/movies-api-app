@@ -71,7 +71,9 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
                 imageCode: 1,
                 "directorInfo.name": 1,
                 "directorInfo.bio": 1,
-                "genreNames.name": 1
+                "directorInfo.birthday": 1,
+                "genreNames.name": 1,
+                "genreNames.description": 1
             }
         }
     ]).then((allMovies)=>{
@@ -109,7 +111,7 @@ app.get('/movies/:movieTitle', passport.authenticate('jwt', {session: false}), (
                  imageCode: 1,
                  "directorInfo.name": 1,
                  "directorInfo.bio": 1,
-                 "genreNames.name": 1
+                 "genreNames.name": 1,
              }
         }
     ]).then((movie)=>{
