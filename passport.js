@@ -3,7 +3,6 @@ const passport = require('passport'),
     Models = require('./models.js'),
     passportJWT = require('passport-jwt');
 
-require('dotenv').config();
 const jwtSecret = process.env.secretKey;
 
 let Users = Models.Users,

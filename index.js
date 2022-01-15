@@ -301,12 +301,19 @@ app.post('/user/:userID/favorites/:movieTitle', passport.authenticate('jwt', {se
 // PUT Requests
 
 // update user info
-app.put('/user/update/:username', passport.authenticate('jwt', {session: false}), (req,res)=>{
+app.put('/user/update/:username', passport.authenticate('jwt', {session: false}), 
+    [
+        check('username', 'Username is required').isLength({min: 5}),
+        check('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+        check('password', 'Password is required').not().isEmpty(),
+        check('email', 'Email does not appear to be valid').isEmail()
+    ], (req,res)=>{
     let hashedPassword = Users.hashPassword(req.body.password);
     // update user info and return updated document
     Users.findOne({username: req.params.username}).then((user)=>{
         if (!user){
             res.status(400).send('user does not exist');
+            return;
         }
         else {
             Users.findOneAndUpdate(
@@ -324,15 +331,13 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
                     if(err){
                         console.error(error);
                         res.status('Error: ' + error);
+                        return;
                     }
-                    else{
+                    else {
                         res.json(updatedUser);
                     }
                 }
-            ).catch((error)=>{
-                console.error(error);
-                res.status(500).send('Error: ' + error);
-            });
+            )
         }
     }).catch((error)=>{
         console.error(error);
