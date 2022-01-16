@@ -197,6 +197,13 @@ app.get('/directors/:director', passport.authenticate('jwt', {session: false}), 
     });
 });
 
+app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req, res)=>{
+    // find director by name (case insensitive) and return document
+    Users.find({username: req.params.username}).collation({ locale: "en", strength: 2 }).then((user)=>{
+        res.json(user);
+    });
+});
+
 // POST REQUESTS
 
 // register a new user
