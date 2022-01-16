@@ -315,6 +315,13 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
         check('password', 'Password is required').not().isEmpty(),
         check('email', 'Email does not appear to be valid').isEmail()
     ], (req,res)=>{
+
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    console.log(req.body)
     let hashedPassword = Users.hashPassword(req.body.password);
     // update user info and return updated document
     Users.findOne({username: req.params.username}).then((user)=>{
