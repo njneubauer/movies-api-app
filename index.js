@@ -31,7 +31,7 @@ const passport = require('passport');
 require('./passport');
 
 // import express-validator 
-const {check, body, validationResult, body} = require('express-validator');
+const {check, body, validationResult} = require('express-validator');
 
 // static file response documentation.html file
 app.use(express.static('public'));
