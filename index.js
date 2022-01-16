@@ -31,7 +31,7 @@ const passport = require('passport');
 require('./passport');
 
 // import express-validator 
-const {check, validationResult} = require('express-validator');
+const {check, body, validationResult, body} = require('express-validator');
 
 // static file response documentation.html file
 app.use(express.static('public'));
@@ -310,10 +310,10 @@ app.post('/user/:userID/favorites/:movieTitle', passport.authenticate('jwt', {se
 // update user info
 app.put('/user/update/:username', passport.authenticate('jwt', {session: false}), 
     [
-        check('username', 'Username is required').isLength({min: 5}),
-        check('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
-        check('password', 'Password is required').not().isEmpty(),
-        check('email', 'Email does not appear to be valid').isEmail()
+        body('username', 'Username is required').isLength({min: 5}),
+        body('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+        body('password', 'Password is required').not().isEmpty(),
+        body('email', 'Email does not appear to be valid').isEmail()
     ], (req,res)=>{
 
     let errors = validationResult(req);
