@@ -199,7 +199,7 @@ app.get('/directors/:director', passport.authenticate('jwt', {session: false}), 
 
 app.get('/user', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find director by name (case insensitive) and return document
-    Users.findOne({username: req.body.username}).collation({ locale: "en", strength: 2 }).then((user)=>{
+    Users.findOne({username: req.params.username}).collation({ locale: "en", strength: 2 }).then((user)=>{
         res.json(user);
     });
 });
