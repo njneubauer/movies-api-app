@@ -249,7 +249,7 @@ app.post('/registration',
 });
 
 // add movie to users favorites list
-app.post('/:username/addMovie/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
+app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // find movie objectID
     Movies.findOne({title: req.params.movieTitle}).collation({locale: "en", strength:2})
     .then((movie)=>{
