@@ -390,10 +390,10 @@ app.delete('/remove/:username', passport.authenticate('jwt', {session: false}), 
     // remove user by objectID, notify if user doesn't exist
     Users.findOneAndRemove({username: req.params.username}).then((user)=>{
         if (!user){
-            res.status(400).send(req.params.userID + " user was not found");
+            res.status(400).send(req.params.username + " user was not found");
         }
         else {
-            res.status(200).send(req.params.userID + " user has been successfully removed");
+            res.status(200).send(req.params.username + " user has been successfully removed");
         }
     }).catch((err)=>{
         console.error(err);
