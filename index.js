@@ -249,7 +249,7 @@ app.post('/registration',
 });
 
 // add movie to users favorites list
-app.post('/user/:userID/favorites/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
+app.post('/:username/addMovie/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // find movie objectID
     Movies.findOne({title: req.params.movieTitle}).collation({locale: "en", strength:2})
     .then((movie)=>{
@@ -258,7 +258,7 @@ app.post('/user/:userID/favorites/:movieTitle', passport.authenticate('jwt', {se
     }).then((movieID)=>{
         // use movieID to update user favorites list
         Users.findOneAndUpdate(
-            {_id: req.params.userID},
+            {username: req.params.username},
             {$addToSet: {favoriteMovies: movieID}},
             {new: true},
             (err, updatedFavMovies)=>{
@@ -362,7 +362,7 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
 // DELETE REQUESTS
 
 // delete movie from user's favorites list
-app.delete('/:userID/favorites/delete/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
+app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Movies.findOne({title: req.params.movieTitle}).collation({locale:"en", strength:2}).then((movie)=>{
         let movieID = movie._id;
         return movieID;
