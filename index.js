@@ -386,9 +386,9 @@ app.delete('/:userID/favorites/delete/:movieTitle', passport.authenticate('jwt',
 });
 
 // deregister an existing user
-app.delete('/remove/:userID', passport.authenticate('jwt', {session: false}), (req,res)=>{
+app.delete('/remove/:username', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // remove user by objectID, notify if user doesn't exist
-    Users.findOneAndRemove({_id: req.params.userID}).then((user)=>{
+    Users.findOneAndRemove({username: req.params.username}).then((user)=>{
         if (!user){
             res.status(400).send(req.params.userID + " user was not found");
         }
