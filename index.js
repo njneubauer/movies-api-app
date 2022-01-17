@@ -200,7 +200,36 @@ app.get('/directors/:director', passport.authenticate('jwt', {session: false}), 
 app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find director by name (case insensitive) and return document
     Users.findOne({username: req.params.username}).collation({ locale: "en", strength: 2 }).then((user)=>{
-        res.json(user);
+        Users.aggregate([
+            {
+                $match: {_id: user._id}
+            },
+            {
+                $lookup: {
+                    from: "movies",
+                    localField: "favoriteMovies",
+                    foreignField: "_id",
+                    as: "favoriteMoviesInfo"
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    username: 1,
+                    email: 1,
+                    favoriteMovies: 1,
+                    "favoriteMoviesInfo": {
+                        _id: 1,
+                        title: 1,
+                        year: 1
+                    }
+                }
+            }]).then((userFavorites)=>{
+                    res.json(userFavorites);
+                }).catch((error)=>{
+                    console.error(error);
+                    res.status(500).send('Error: ' + error);
+                });
     });
 });
 
