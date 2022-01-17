@@ -368,7 +368,7 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
         return movieID;
     }).then((movieId)=>{
         Users.updateOne(
-            {_id: req.params.username, favoriteMovies: movieId},
+            {username: req.params.username, favoriteMovies: movieId},
             {$pull:{favoriteMovies: movieId}},
             {new: true}
         ).then((movie)=>{
