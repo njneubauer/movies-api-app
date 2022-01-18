@@ -395,23 +395,56 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
     Movies.findOne({title: req.params.movieTitle}).collation({locale:"en", strength:2}).then((movie)=>{
         let movieID = movie._id;
         return movieID;
-    }).then((movieId)=>{
-        Users.updateOne(
-            {username: req.params.username, favoriteMovies: movieId},
-            {$pull:{favoriteMovies: movieId}},
-            {new: true}
-        ).then((movie)=>{
-            if(movie.modifiedCount == 0){
-                res.status(400).send("Movie or user does not exist");
-            }
-            else {
-                res.status(200).send(`${req.params.movieTitle} has been removed from user's favorites list`);
-            }
+        }).then((movieId)=>{
+            Users.findOneAndUpdate(
+                {username: req.params.username},
+                {$pull:{favoriteMovies: movieId}},
+                {new: true},
+                (err, updatedFavMovies)=>{
+                    console.log(updatedFavMovies);
+                    if (err){
+                        console.error(err);
+                        res.status(500).send('Error: ' + err);
+                    }
+                    else {
+                        Users.aggregate([
+                            {
+                                $match: {_id: updatedFavMovies._id}
+                            },
+                            {
+                                $lookup: {
+                                    from: "movies",
+                                    localField: "favoriteMovies",
+                                    foreignField: "_id",
+                                    as: "favoriteMoviesInfo"
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    username: 1,
+                                    email: 1,
+                                    favoriteMovies: 1,
+                                    "favoriteMoviesInfo": {
+                                        _id: 1,
+                                        title: 1,
+                                        year: 1
+                                    }
+                                }
+                            }
+                        ]).then((userFavorites)=>{
+                                    res.json(userFavorites);
+                                }).catch((error)=>{
+                                    console.error(error);
+                                    res.status(500).send('Error: ' + error);
+                                });
+                    }
+                }
+            )
         }).catch((error)=>{
             console.error(error);
             res.status(500).send('Error: ' + error);
         });
-    });
 });
 
 // deregister an existing user
