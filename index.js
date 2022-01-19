@@ -432,7 +432,7 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
                                 }
                             }
                         ]).then((userFavorites)=>{
-                                    res.json(userFavorites);
+                                    res.json(userFavorites[0]);
                                 }).catch((error)=>{
                                     console.error(error);
                                     res.status(500).send('Error: ' + error);
