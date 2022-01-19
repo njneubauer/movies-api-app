@@ -217,6 +217,7 @@ app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req,
                     _id: 1,
                     username: 1,
                     email: 1,
+                    birthday: 1,
                     favoriteMovies: 1,
                     "favoriteMoviesInfo": {
                         _id: 1,
@@ -350,7 +351,6 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
-    console.log(req.body)
     let hashedPassword = Users.hashPassword(req.body.password);
     // update user info and return updated document
     Users.findOne({username: req.params.username}).then((user)=>{
@@ -401,7 +401,6 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
                 {$pull:{favoriteMovies: movieId}},
                 {new: true},
                 (err, updatedFavMovies)=>{
-                    console.log(updatedFavMovies);
                     if (err){
                         console.error(err);
                         res.status(500).send('Error: ' + err);
