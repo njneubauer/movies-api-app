@@ -226,7 +226,7 @@ app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req,
                     }
                 }
             }]).then((userFavorites)=>{
-                    res.json(userFavorites);
+                    res.json(userFavorites[0]);
                 }).catch((error)=>{
                     console.error(error);
                     res.status(500).send('Error: ' + error);
