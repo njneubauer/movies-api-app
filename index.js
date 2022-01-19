@@ -322,7 +322,7 @@ app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {sessio
                                 }
                             }
                         }]).then((userFavorites)=>{
-                                res.json(userFavorites);
+                                res.json(userFavorites[0]);
                             }).catch((error)=>{
                                 console.error(error);
                                 res.status(500).send('Error: ' + error);
