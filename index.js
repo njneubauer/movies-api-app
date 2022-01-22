@@ -337,7 +337,7 @@ app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {sessio
 // PUT Requests
 
 // update user info
-app.put('/user/update/:username', passport.authenticate('jwt', {session: false}), 
+app.put('/user/update/:username', passport.authenticate('jwt', {session: false}),
     [
         body('username', 'Username is required').isLength({min: 5}),
         body('username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
@@ -350,7 +350,7 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
-    console.log(req.body)
+
     let hashedPassword = Users.hashPassword(req.body.password);
     // update user info and return updated document
     Users.findOne({username: req.params.username}).then((user)=>{
@@ -371,13 +371,42 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
                 },
                 {new: true},
                 (err, updatedUser)=>{
-                    if(err){
-                        console.error(error);
-                        res.status('Error: ' + error);
-                        return;
+                    if (err){
+                        console.error(err);
+                        res.status(500).send('Error: ' + err);
                     }
                     else {
-                        res.json(updatedUser);
+                        Users.aggregate([
+                            {
+                                $match: {_id: updatedUser._id}
+                            },
+                            {
+                                $lookup: {
+                                    from: "movies",
+                                    localField: "favoriteMovies",
+                                    foreignField: "_id",
+                                    as: "favoriteMoviesInfo"
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    username: 1,
+                                    email: 1,
+                                    favoriteMovies: 1,
+                                    "favoriteMoviesInfo": {
+                                        _id: 1,
+                                        title: 1,
+                                        year: 1
+                                    }
+                                }
+                            }
+                        ]).then((updatedUser)=>{
+                                    res.json(updatedUser);
+                                }).catch((error)=>{
+                                    console.error(error);
+                                    res.status(500).send('Error: ' + error);
+                                });
                     }
                 }
             )
@@ -401,7 +430,6 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
                 {$pull:{favoriteMovies: movieId}},
                 {new: true},
                 (err, updatedFavMovies)=>{
-                    console.log(updatedFavMovies);
                     if (err){
                         console.error(err);
                         res.status(500).send('Error: ' + err);
