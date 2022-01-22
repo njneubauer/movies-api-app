@@ -403,7 +403,7 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
                                 }
                             }
                         ]).then((updatedUser)=>{
-                                    res.json(updatedUser);
+                                    res.json(updatedUser[0]);
                                 }).catch((error)=>{
                                     console.error(error);
                                     res.status(500).send('Error: ' + error);
