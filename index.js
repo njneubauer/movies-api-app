@@ -217,6 +217,7 @@ app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req,
                     _id: 1,
                     username: 1,
                     email: 1,
+                    birthday: 1,
                     favoriteMovies: 1,
                     "favoriteMoviesInfo": {
                         _id: 1,
@@ -225,7 +226,7 @@ app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req,
                     }
                 }
             }]).then((userFavorites)=>{
-                    res.json(userFavorites);
+                    res.json(userFavorites[0]);
                 }).catch((error)=>{
                     console.error(error);
                     res.status(500).send('Error: ' + error);
@@ -321,7 +322,7 @@ app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {sessio
                                 }
                             }
                         }]).then((userFavorites)=>{
-                                res.json(userFavorites);
+                                res.json(userFavorites[0]);
                             }).catch((error)=>{
                                 console.error(error);
                                 res.status(500).send('Error: ' + error);
@@ -350,7 +351,7 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
-
+    
     let hashedPassword = Users.hashPassword(req.body.password);
     // update user info and return updated document
     Users.findOne({username: req.params.username}).then((user)=>{
@@ -461,7 +462,7 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
                                 }
                             }
                         ]).then((userFavorites)=>{
-                                    res.json(userFavorites);
+                                    res.json(userFavorites[0]);
                                 }).catch((error)=>{
                                     console.error(error);
                                     res.status(500).send('Error: ' + error);
