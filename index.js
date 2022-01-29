@@ -265,27 +265,35 @@ app.post('/registration',
     }
 
     let hashedPassword = Users.hashPassword(req.body.password);
-    // find user, IF exists return message message "already exists" ELSE create new user
+    // find user, IF exists return error message.
     Users.findOne({ username: req.body.username }).then((user)=>{
         if (user) {
             return res.status(400).send(req.body.username + ' already exists');
         }
         else {
-            Users.create({
-                username: req.body.username,
-                password: hashedPassword,
-                email: req.body.email,
-                birthday: req.body.birthday
-            }).then((user)=>{res.status(200).json(user)})
-            .catch((error)=>{
-                console.error(error);
-                res.status(500).send('Error: ' + error);
+            // check to see if email already exists. If it does send error. If it does not, create user.
+            Users.findOne({ email: req.body.email }).then((email)=>{
+                if (email) {
+                    return res.status(400).send(req.body.email + ' already exists');
+                } 
+                else {
+                    Users.create({
+                        username: req.body.username,
+                        password: hashedPassword,
+                        email: req.body.email,
+                        birthday: req.body.birthday
+                    }).then((user)=>{res.status(200).json(user)})
+                    .catch((error)=>{
+                        console.error(error);
+                        res.status(500).send('Error: ' + error);
+                    })
+                }
             })
         }
     })
     .catch((error)=>{
-        console.error(error);
-        res.status(500).send('Error: ' + error);
+            console.error(error);
+            res.status(500).send('Error: ' + error);
     });
 });
 
