@@ -334,6 +334,7 @@ app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {sessio
                                 username: 1,
                                 email: 1,
                                 favoriteMovies: 1,
+                                birthday: 1,
                                 "favoriteMoviesInfo": {
                                     _id: 1,
                                     title: 1,
