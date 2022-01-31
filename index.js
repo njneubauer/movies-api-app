@@ -473,6 +473,7 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
                                     _id: 1,
                                     username: 1,
                                     email: 1,
+                                    birthday: 1,
                                     favoriteMovies: 1,
                                     "favoriteMoviesInfo": {
                                         _id: 1,
