@@ -208,8 +208,8 @@ app.get('/directors/:director', passport.authenticate('jwt', {session: false}), 
     });
 });
 
+// return data about a user
 app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req, res)=>{
-    // find director by name (case insensitive) and return document
     Users.findOne({username: req.params.username}).collation({ locale: "en", strength: 2 }).then((user)=>{
         Users.aggregate([
             {
