@@ -21,7 +21,7 @@ app.use(morgan('common'));
 
 // import CORS and define accepted origins
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080','http://localhost:4200', 'http://localhost:1234', 'https://nickflixmovieinfo.netlify.app'];
+let allowedOrigins = ['http://localhost:8080','http://localhost:4200', 'http://localhost:1234', 'https://nickflixmovieinfo.netlify.app', 'https://njneubauer.github.io/Angluar-MyFlix-Client'];
 
 app.use(cors({
   origin: (origin, callback) => {
