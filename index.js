@@ -52,8 +52,14 @@ app.use('/documentation.html', express.static('public/documentation.html'));
 
 app.get('/', function (req, res) {
     res.send('Welcome to the MyFix App!');
-})
+});
 
+/** 
+ * @method GET
+ * @param {string} endpoint - /movies
+ * @requires authentication JWT token
+ * @returns {json} response: a list of all movies including genre and director information
+ */
 // returns a list of all movies
 app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // get all movie documents
@@ -93,6 +99,14 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
 });
 
 // returns a document about a single movie
+
+/**
+ * @method GET
+ * @param {string} endpoint - /movies/:movieTitle
+ * @requires authentication JWT token
+ * @param {string} movieTitle
+ * @returns {json} Returns information about a single movie including genre & director information.
+ */
 app.get('/movies/:movieTitle', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // set request param to variable
     const movieTitle = req.params.movieTitle;
@@ -131,6 +145,12 @@ app.get('/movies/:movieTitle', passport.authenticate('jwt', {session: false}), (
 });
 
 // returns a list of all genres and their descriptions
+/**
+ * @method GET
+ * @param {string} endpoint - /genres
+ * @requires authentication JWT token
+ * @returns {json} returns all genres & genre descriptions
+ */
 app.get('/genres', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Genres.find().then((genres)=>{
         res.json(genres);
@@ -138,6 +158,13 @@ app.get('/genres', passport.authenticate('jwt', {session: false}), (req,res)=>{
 });
 
 // returns a single genre and it's description
+/**
+ * @method GET
+ * @param {string} endpoint - /genres/:genre
+ * @requires authentication JWT token
+ * @param {string} genre
+ * @returns {json} returns a single genre & genre description
+ */
 app.get('/genres/:genre', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Genres.find({name: req.params.genre}).collation({locale: "en", strength:2}).then((genres)=>{        
         res.json(genres);
@@ -145,6 +172,13 @@ app.get('/genres/:genre', passport.authenticate('jwt', {session: false}), (req,r
 });
 
 // returns movies by genre
+/**
+ * @method GET
+ * @param {string} endpoint - /movies/genres/:genre
+ * @requires authentication JWT token
+ * @param {string} genre
+ * @returns {json} returns all movies that match genre ID
+ */
 app.get('/movies/genres/:genre', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find genre by name
     Genres.find({name: req.params.genre}).collation({locale: 'en', strength:2}).then((genre)=>{
@@ -193,6 +227,12 @@ app.get('/movies/genres/:genre', passport.authenticate('jwt', {session: false}),
 });
 
 // return a list of all directors
+/**
+ * @method GET
+ * @param {string} endpoint - /directors
+ * @requires authentication JWT token
+ * @returns {json} returns an object of all directors and director information (bio, birth year, death year etc.)
+ */
 app.get('/directors', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find & return all director documents
     Directors.find().then((allDir)=>{
@@ -201,6 +241,12 @@ app.get('/directors', passport.authenticate('jwt', {session: false}), (req, res)
  });
 
 // return data about a director (bio, birth year, death year etc.)
+/**
+ * @method GET
+ * @param {string} endpoint - /directors/:director
+ * @param {string} director
+ * @returns {json} returns an object of one director and director information (bio, birth year, death year etc.)
+ */
 app.get('/directors/:director', passport.authenticate('jwt', {session: false}), (req, res)=>{
     // find director by name (case insensitive) and return document
     Directors.find({name: req.params.director}).collation({ locale: "en", strength: 2 }).then((director)=>{
@@ -209,6 +255,13 @@ app.get('/directors/:director', passport.authenticate('jwt', {session: false}), 
 });
 
 // return data about a user
+/**
+ * @method GET
+ * @param {string} endpoint - /user/:username
+ * @requires authentication JWT token
+ * @param {string} username
+ * @returns {json} returns user information: id, username, email, birthday, favorite movies, & movie info
+ */
 app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req, res)=>{
     Users.findOne({username: req.params.username}).collation({ locale: "en", strength: 2 }).then((user)=>{
         Users.aggregate([
@@ -248,6 +301,16 @@ app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req,
 // POST REQUESTS
 
 // register a new user
+/**
+ * @method POST
+ * @param {string} endpoint - /registration
+ * Body info
+ * @param {string} username
+ * @param {string} password
+ * @param {string} email
+ * @param {string} birthday
+ * @returns {json} returns user data: id, username, email, hashed password, birthday, favorite movies IDs (empty array)
+ */
 app.post('/registration',
   // Validation logic for request
   [
@@ -298,6 +361,14 @@ app.post('/registration',
 });
 
 // add movie to users favorites list
+/**
+ * @method POST
+ * @param {string} endpoint - /:username/addmovie/:movieTitle
+ * @requires authentication JWT token
+ * @param {string} username
+ * @param {string} movieTitle
+ * @returns {json} returns user data: id, username, email, hashed password, birthday, favorite movies IDs
+ */
 app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // find movie objectID
     Movies.findOne({title: req.params.movieTitle}).collation({locale: "en", strength:2})
@@ -356,7 +427,13 @@ app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {sessio
 });
 
 // PUT Requests
-
+/**
+ * @method PUT
+ * @param {string} endpoint - /user/update/:username
+ * @requires authentication JWT token
+ * @param {string} username
+ * @returns {json} returns user data: id, username, email, hashed password, birthday, favorite movies IDs
+ */
 // update user info
 app.put('/user/update/:username', passport.authenticate('jwt', {session: false}),
     [
@@ -440,7 +517,14 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
 });
 
 // DELETE REQUESTS
-
+/**
+ * @method DELETE
+ * @param {string} endpoint - /:username/favorites/delete/:movieTitle
+ * @requires authentication JWT token
+ * @param {string} username
+ * @param {string} movieTitle
+ * @returns {json} returns user data: id, username, email, hashed password, birthday, favorite movies IDs, & movie info
+ */
 // delete movie from user's favorites list
 app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Movies.findOne({title: req.params.movieTitle}).collation({locale:"en", strength:2}).then((movie)=>{
@@ -499,6 +583,13 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
 });
 
 // deregister an existing user
+/**
+ * @method DELETE
+ * @param {string} endpoint - /remove/:username
+ * @requires authentication JWT token
+ * @param {string} username
+ * @returns {json} response message regard removal status of the user
+ */
 app.delete('/remove/:username', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // remove user by objectID, notify if user doesn't exist
     Users.findOneAndRemove({username: req.params.username}).then((user)=>{
