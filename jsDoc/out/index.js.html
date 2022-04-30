@@ -84,7 +84,7 @@ app.get('/', function (req, res) {
 
 /** 
  * @method GET
- * @param {string} endpoint - {url}/movies
+ * @param {string} endpoint - /movies
  * @requires authentication JWT token
  * @returns {json} response: a list of all movies including genre and director information
  */
@@ -130,7 +130,7 @@ app.get('/movies', passport.authenticate('jwt', {session: false}), (req, res)=>{
 
 /**
  * @method GET
- * @param {string} endpoint - {url}/movies/:movieTitle
+ * @param {string} endpoint - /movies/:movieTitle
  * @requires authentication JWT token
  * @param {string} movieTitle
  * @returns {json} Returns information about a single movie including genre &amp; director information.
@@ -175,7 +175,7 @@ app.get('/movies/:movieTitle', passport.authenticate('jwt', {session: false}), (
 // returns a list of all genres and their descriptions
 /**
  * @method GET
- * @param {string} endpoint - {url}/genres
+ * @param {string} endpoint - /genres
  * @requires authentication JWT token
  * @returns {json} returns all genres &amp; genre descriptions
  */
@@ -188,7 +188,7 @@ app.get('/genres', passport.authenticate('jwt', {session: false}), (req,res)=>{
 // returns a single genre and it's description
 /**
  * @method GET
- * @param {string} endpoint - {url}/genres/:genre
+ * @param {string} endpoint - /genres/:genre
  * @requires authentication JWT token
  * @param {string} genre
  * @returns {json} returns a single genre &amp; genre description
@@ -202,7 +202,7 @@ app.get('/genres/:genre', passport.authenticate('jwt', {session: false}), (req,r
 // returns movies by genre
 /**
  * @method GET
- * @param {string} endpoint - {url}/movies/genres/:genre
+ * @param {string} endpoint - /movies/genres/:genre
  * @requires authentication JWT token
  * @param {string} genre
  * @returns {json} returns all movies that match genre ID
@@ -257,7 +257,7 @@ app.get('/movies/genres/:genre', passport.authenticate('jwt', {session: false}),
 // return a list of all directors
 /**
  * @method GET
- * @param {string} endpoint - {url}/directors
+ * @param {string} endpoint - /directors
  * @requires authentication JWT token
  * @returns {json} returns an object of all directors and director information (bio, birth year, death year etc.)
  */
@@ -271,7 +271,7 @@ app.get('/directors', passport.authenticate('jwt', {session: false}), (req, res)
 // return data about a director (bio, birth year, death year etc.)
 /**
  * @method GET
- * @param {string} endpoint - {url}/directors/:director
+ * @param {string} endpoint - /directors/:director
  * @param {string} director
  * @returns {json} returns an object of one director and director information (bio, birth year, death year etc.)
  */
@@ -285,7 +285,7 @@ app.get('/directors/:director', passport.authenticate('jwt', {session: false}), 
 // return data about a user
 /**
  * @method GET
- * @param {string} endpoint - {url}/user/:username
+ * @param {string} endpoint - /user/:username
  * @requires authentication JWT token
  * @param {string} username
  * @returns {json} returns user information: id, username, email, birthday, favorite movies, &amp; movie info
@@ -331,7 +331,7 @@ app.get('/user/:username', passport.authenticate('jwt', {session: false}), (req,
 // register a new user
 /**
  * @method POST
- * @param {string} endpoint - {url}/registration
+ * @param {string} endpoint - /registration
  * Body info
  * @param {string} username
  * @param {string} password
@@ -391,7 +391,7 @@ app.post('/registration',
 // add movie to users favorites list
 /**
  * @method POST
- * @param {string} endpoint - {url}/:username/addmovie/:movieTitle
+ * @param {string} endpoint - /:username/addmovie/:movieTitle
  * @requires authentication JWT token
  * @param {string} username
  * @param {string} movieTitle
@@ -455,7 +455,13 @@ app.post('/:username/addmovie/:movieTitle', passport.authenticate('jwt', {sessio
 });
 
 // PUT Requests
-
+/**
+ * @method PUT
+ * @param {string} endpoint - /user/update/:username
+ * @requires authentication JWT token
+ * @param {string} username
+ * @returns {json} returns user data: id, username, email, hashed password, birthday, favorite movies IDs
+ */
 // update user info
 app.put('/user/update/:username', passport.authenticate('jwt', {session: false}),
     [
@@ -539,7 +545,14 @@ app.put('/user/update/:username', passport.authenticate('jwt', {session: false})
 });
 
 // DELETE REQUESTS
-
+/**
+ * @method DELETE
+ * @param {string} endpoint - /:username/favorites/delete/:movieTitle
+ * @requires authentication JWT token
+ * @param {string} username
+ * @param {string} movieTitle
+ * @returns {json} returns user data: id, username, email, hashed password, birthday, favorite movies IDs, &amp; movie info
+ */
 // delete movie from user's favorites list
 app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt', {session: false}), (req,res)=>{
     Movies.findOne({title: req.params.movieTitle}).collation({locale:"en", strength:2}).then((movie)=>{
@@ -598,6 +611,13 @@ app.delete('/:username/favorites/delete/:movieTitle', passport.authenticate('jwt
 });
 
 // deregister an existing user
+/**
+ * @method DELETE
+ * @param {string} endpoint - /remove/:username
+ * @requires authentication JWT token
+ * @param {string} username
+ * @returns {json} response message regard removal status of the user
+ */
 app.delete('/remove/:username', passport.authenticate('jwt', {session: false}), (req,res)=>{
     // remove user by objectID, notify if user doesn't exist
     Users.findOneAndRemove({username: req.params.username}).then((user)=>{
@@ -633,13 +653,13 @@ const port = process.env.PORT || 8080;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#GET">GET</a></li><li><a href="global.html#POST">POST</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#DELETE">DELETE</a></li><li><a href="global.html#GET">GET</a></li><li><a href="global.html#POST">POST</a></li><li><a href="global.html#PUT">PUT</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Fri Apr 29 2022 20:06:48 GMT-0500 (Central Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Sat Apr 30 2022 18:28:10 GMT-0500 (Central Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
